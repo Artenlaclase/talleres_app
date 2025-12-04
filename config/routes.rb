@@ -1,4 +1,11 @@
 Rails.application.routes.draw do
+  get "talleres/index"
+  get "talleres/show"
+  get "talleres/new"
+  get "talleres/create"
+  get "talleres/edit"
+  get "talleres/update"
+  get "talleres/destroy"
   get "pages/home"
   
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
