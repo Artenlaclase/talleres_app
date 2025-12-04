@@ -10,7 +10,14 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2025_12_04_151753) do
+ActiveRecord::Schema[8.1].define(version: 2025_12_04_154338) do
+  create_table "estudiantes", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.string "curso"
+    t.string "nombre"
+    t.datetime "updated_at", null: false
+  end
+
   create_table "tallers", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.integer "cupos"
