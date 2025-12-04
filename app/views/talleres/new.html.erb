@@ -1,2 +1,15 @@
 <h1>Talleres#new</h1>
 <p>Find me in app/views/talleres/new.html.erb</p>
+
+<%= form_with(model: @taller) do |form| %>
+  <%= form.label :nombre %>
+  <%= form.text_field :nombre %>
+
+  <%= form.label :descripcion %>
+  <%= form.text_area :descripcion %>
+
+  <%= form.label :cupos %>
+  <%= form.number_field :cupos %>
+
+  <%= form.submit "Crear Taller" %>
+<% end %>
