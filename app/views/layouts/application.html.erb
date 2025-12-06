@@ -1,29 +1,37 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title><%= content_for(:title) || "Talleres App" %></title>
+    <title>TalleresApp</title>
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="application-name" content="Talleres App">
-    <meta name="mobile-web-app-capable" content="yes">
+
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
 
-    <%= yield :head %>
-
-    <%# Enable PWA manifest for installable apps (make sure to enable in config/routes.rb too!) %>
-    <%#= tag.link rel: "manifest", href: pwa_manifest_path(format: :json) %>
-
-    <link rel="icon" href="/icon.png" type="image/png">
-    <link rel="icon" href="/icon.svg" type="image/svg+xml">
-    <link rel="apple-touch-icon" href="/icon.png">
-
-    <%# Includes all stylesheet files in app/assets/stylesheets %>
-    <%= stylesheet_link_tag :app, "data-turbo-track": "reload" %>
+    <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
     <%= javascript_importmap_tags %>
   </head>
 
-  <body>
-    <%= yield %>
+  <body class="bg-gray-100 text-gray-800">
+
+    <!-- NAVBAR -->
+    <nav class="bg-blue-700 text-white px-8 py-4 shadow">
+      <div class="flex justify-between items-center">
+        <h1 class="text-xl font-bold">
+          <%= link_to "Talleres App", root_path, class: "hover:text-blue-200" %>
+        </h1>
+
+        <div class="space-x-6">
+          <%= link_to "Inicio", root_path, class: "hover:text-blue-300" %>
+          <%= link_to "Talleres", talleres_path, class: "hover:text-blue-300" %>
+          <%= link_to "Nuevo Taller", new_taller_path,
+                class: "px-3 py-1 bg-white text-blue-700 rounded hover:bg-blue-100" %>
+        </div>
+      </div>
+    </nav>
+
+    <!-- CONTENIDO -->
+    <main class="max-w-4xl mx-auto mt-10 bg-white p-8 shadow rounded">
+      <%= yield %>
+    </main>
   </body>
 </html>
