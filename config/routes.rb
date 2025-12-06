@@ -1,5 +1,5 @@
 Rails.application.routes.draw do
-  devise_for :users
+  devise_for :users, controllers: { registrations: "devise/registrations" }
 
   namespace :api do
     namespace :v1 do
