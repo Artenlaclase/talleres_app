@@ -1,17 +1,18 @@
 Rails.application.routes.draw do
+  devise_for :users
+
   namespace :api do
     namespace :v1 do
       resources :talleres, only: [:index, :show]
       resources :estudiantes, only: [:index, :show]
     end
   end
-  devise_for :users
+
   resources :estudiantes
+  resources :talleres
   get "pages/home"
 
   root "pages#home"
-
-  resources :talleres
 
   get "up" => "rails/health#show", as: :rails_health_check
 end
