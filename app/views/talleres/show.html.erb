@@ -1,2 +1,7 @@
-<h1>Talleres#show</h1>
-<p>Find me in app/views/talleres/show.html.erb</p>
+<h1><%= @taller.nombre %></h1>
+
+<p><strong>Descripción:</strong> <%= @taller.descripcion %></p>
+<p><strong>Cupos:</strong> <%= @taller.cupos %></p>
+
+<%= link_to "Editar", edit_taller_path(@taller) %> |
+<%= link_to "Volver", talleres_path %>

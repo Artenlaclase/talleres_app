@@ -1,0 +1,31 @@
+<%= form_with(model: @taller) do |form| %>
+  <% if @taller.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(@taller.errors.count, "error") %> prohibited this taller from being saved:</h2>
+      <ul>
+        <% @taller.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div>
+    <%= form.label :nombre %><br>
+    <%= form.text_field :nombre %>
+  </div>
+
+  <div>
+    <%= form.label :descripcion %><br>
+    <%= form.text_area :descripcion %>
+  </div>
+
+  <div>
+    <%= form.label :cupos %><br>
+    <%= form.number_field :cupos %>
+  </div>
+
+  <div>
+    <%= form.submit %>
+  </div>
+<% end %>

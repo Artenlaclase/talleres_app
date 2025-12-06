@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2025_12_06_193834) do
+ActiveRecord::Schema[8.1].define(version: 2025_12_06_195222) do
   create_table "estudiantes", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.string "curso"
@@ -24,6 +24,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_06_193834) do
     t.datetime "created_at", null: false
     t.integer "cupos"
     t.text "descripcion"
+    t.date "fecha"
     t.string "nombre"
     t.datetime "updated_at", null: false
   end

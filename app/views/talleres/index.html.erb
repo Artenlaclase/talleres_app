@@ -1,2 +1,13 @@
-<h1>Talleres#index</h1>
-<p>Find me in app/views/talleres/index.html.erb</p>
+<h1>Listado de Talleres</h1>
+
+<%= link_to "Nuevo Taller", new_taller_path %>
+
+<ul>
+  <% @talleres.each do |t| %>
+    <li>
+      <%= link_to t.nombre, t %> |
+      <%= link_to "Editar", edit_taller_path(t) %> |
+      <%= link_to "Eliminar", t, method: :delete, data: { confirm: "¿Seguro?" } %>
+    </li>
+  <% end %>
+</ul>
