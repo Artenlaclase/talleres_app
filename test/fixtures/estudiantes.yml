@@ -3,7 +3,9 @@
 one:
   nombre: MyString
   curso: MyString
+  taller: one
 
 two:
   nombre: MyString
   curso: MyString
+  taller: two
