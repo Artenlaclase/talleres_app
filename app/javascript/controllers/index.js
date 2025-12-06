@@ -2,3 +2,7 @@
 import { application } from "controllers/application"
 import { eagerLoadControllersFrom } from "@hotwired/stimulus-loading"
 eagerLoadControllersFrom("controllers", application)
+
+// Ensure menu controller is registered explicitly
+import MenuController from "controllers/menu_controller"
+application.register("menu", MenuController)
