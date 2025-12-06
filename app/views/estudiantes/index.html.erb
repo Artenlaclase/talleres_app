@@ -1,16 +1,39 @@
-<p style="color: green"><%= notice %></p>
-
 <% content_for :title, "Estudiantes" %>
 
-<h1>Estudiantes</h1>
+<h1 class="text-3xl font-bold mb-6">Listado de Estudiantes</h1>
 
-<div id="estudiantes">
-  <% @estudiantes.each do |estudiante| %>
-    <%= render estudiante %>
-    <p>
-      <%= link_to "Show this estudiante", estudiante %>
-    </p>
+<div class="flex justify-between items-center mb-4">
+  <p class="text-green-600"><%= notice %></p>
+  <% if user_signed_in? && current_user.admin? %>
+    <%= link_to "Nuevo Estudiante", new_estudiante_path,
+        class: "px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700" %>
   <% end %>
-</div>
+  </div>
 
-<%= link_to "New estudiante", new_estudiante_path %>
+<table class="min-w-full bg-white border border-gray-200 rounded-lg overflow-hidden shadow">
+  <thead class="bg-gray-100 border-b">
+    <tr>
+      <th class="px-4 py-2 text-left font-semibold">Nombre</th>
+      <th class="px-4 py-2 text-left font-semibold">Curso</th>
+      <th class="px-4 py-2 text-left font-semibold">Taller</th>
+      <th class="px-4 py-2 text-left font-semibold">Acciones</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @estudiantes.each do |e| %>
+      <tr class="border-b hover:bg-gray-50">
+        <td class="px-4 py-2"><%= e.nombre %></td>
+        <td class="px-4 py-2"><%= e.curso %></td>
+        <td class="px-4 py-2"><%= e.taller&.nombre %></td>
+        <td class="px-4 py-2 space-x-3">
+          <%= link_to "Ver", estudiante_path(e.id), class: "text-blue-600 hover:underline" %>
+          <% if user_signed_in? && current_user.admin? %>
+            <%= link_to "Editar", edit_estudiante_path(e.id), class: "text-yellow-600 hover:underline" %>
+            <%= link_to "Eliminar", estudiante_path(e.id), method: :delete,
+                  data: { confirm: "¿Seguro?" }, class: "text-red-600 hover:underline" %>
+          <% end %>
+        </td>
+      </tr>
+    <% end %>
+  </tbody>
+  </table>

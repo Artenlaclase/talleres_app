@@ -1,46 +1,51 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>TalleresApp</title>
-    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Talleres App</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
+
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
 
     <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
     <%= javascript_importmap_tags %>
   </head>
 
-  <body class="bg-gray-100 text-gray-800">
+  <body class="bg-gray-100 text-gray-900 font-inter">
 
     <!-- NAVBAR -->
-    <nav class="bg-blue-700 text-white px-8 py-4 shadow">
-      <div class="flex justify-between items-center">
-        <h1 class="text-xl font-bold">
-          <%= link_to "Talleres App", root_path, class: "hover:text-blue-200" %>
+    <nav class="bg-white shadow-md py-4">
+      <div class="container mx-auto flex justify-between items-center px-4">
+        <h1 class="text-2xl font-bold text-blue-600">
+          <%= link_to "TalleresApp", root_path %>
         </h1>
 
-        <div class="space-x-6">
-          <%= link_to "Inicio", root_path, class: "hover:text-blue-300" %>
-          <%= link_to "Talleres", talleres_path, class: "hover:text-blue-300" %>
+        <div class="space-x-6 text-lg">
+          <%= link_to "Inicio", root_path, class: "hover:text-blue-600" %>
+          <%= link_to "Talleres", talleres_path, class: "hover:text-blue-600" %>
           <% if user_signed_in? && current_user.admin? %>
-            <%= link_to "Nuevo Taller", new_taller_path,
-                  class: "px-3 py-1 bg-white text-blue-700 rounded hover:bg-blue-100" %>
-          <% end %>
-          <% if user_signed_in? %>
-            <%= link_to "Salir", destroy_user_session_path, method: :delete,
-                  class: "text-red-200 hover:text-red-100" %>
-          <% else %>
-            <%= link_to "Iniciar Sesión", new_user_session_path,
-                  class: "px-3 py-1 bg-white text-blue-700 rounded hover:bg-blue-100" %>
+            <%= link_to "Nuevo Taller", new_taller_path, class: "hover:text-blue-600" %>
           <% end %>
         </div>
       </div>
     </nav>
 
-    <!-- CONTENIDO -->
-    <main class="max-w-4xl mx-auto mt-10 bg-white p-8 shadow rounded">
+    <!-- MAIN CONTENT -->
+    <main class="container mx-auto mt-8 px-4">
       <%= yield %>
     </main>
+
+    <!-- FOOTER -->
+    <footer class="bg-white mt-16 py-6 shadow-inner">
+      <div class="text-center text-gray-500">
+        © <%= Time.now.year %> TalleresApp – Desarrollado por Raúl Rosales
+      </div>
+    </footer>
+
   </body>
 </html>

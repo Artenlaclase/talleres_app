@@ -1,32 +1,32 @@
-<%= form_with(model: estudiante) do |form| %>
+<%= form_with(model: estudiante, class: "space-y-6") do |form| %>
   <% if estudiante.errors.any? %>
-    <div style="color: red">
-      <h2><%= pluralize(estudiante.errors.count, "error") %> prohibited this estudiante from being saved:</h2>
-
-      <ul>
-        <% estudiante.errors.each do |error| %>
-          <li><%= error.full_message %></li>
+    <div class="mb-6 p-4 bg-red-100 border border-red-400 text-red-700 rounded">
+      <h2 class="font-bold mb-2"><%= pluralize(estudiante.errors.count, "error") %> impidió que se guardara:</h2>
+      <ul class="list-disc pl-5">
+        <% estudiante.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
         <% end %>
       </ul>
     </div>
   <% end %>
 
   <div>
-    <%= form.label :nombre, style: "display: block" %>
-    <%= form.text_field :nombre %>
+    <%= form.label :nombre, class: "block font-semibold mb-1" %>
+    <%= form.text_field :nombre, class: "w-full border border-gray-300 rounded px-3 py-2" %>
   </div>
 
   <div>
-    <%= form.label :curso, style: "display: block" %>
-    <%= form.text_field :curso %>
+    <%= form.label :curso, class: "block font-semibold mb-1" %>
+    <%= form.text_field :curso, class: "w-full border border-gray-300 rounded px-3 py-2" %>
   </div>
 
   <div>
-    <%= form.label :taller_id, style: "display: block" %>
-    <%= form.collection_select :taller_id, Taller.all, :id, :nombre %>
+    <%= form.label :taller_id, class: "block font-semibold mb-1" %>
+    <%= form.collection_select :taller_id, Taller.all, :id, :nombre,
+        {}, { class: "w-full border border-gray-300 rounded px-3 py-2" } %>
   </div>
 
   <div>
-    <%= form.submit %>
+    <%= form.submit class: "px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700" %>
   </div>
 <% end %>
