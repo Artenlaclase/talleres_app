@@ -1,4 +1,6 @@
 class TalleresController < ApplicationController
+  before_action :authenticate_user!, except: [:index, :show]
+  before_action :require_admin!, except: [:index, :show]
   before_action :set_taller, only: [:show, :edit, :update, :destroy]
 
   # GET /talleres
