@@ -16,10 +16,10 @@
     <%= javascript_importmap_tags %>
   </head>
 
-  <body class="bg-gray-100 text-gray-900 font-inter">
+  <body class="bg-gray-100 text-gray-900 font-inter min-h-screen flex flex-col">
 
     <!-- NAVBAR RESPONSIVE -->
-    <nav class="bg-white shadow-md" data-controller="menu">
+    <nav class="bg-white shadow-md" data-controller="menu" data-turbo-permanent>
       <div class="container mx-auto px-4 py-4 flex justify-between items-center">
         <!-- Logo -->
         <h1 class="text-2xl font-bold text-blue-600">
@@ -27,8 +27,11 @@
         </h1>
 
         <!-- Botón hamburguesa (solo móvil) -->
-        <button id="menu-btn" data-menu-target="button" data-action="click->menu#toggle" class="md:hidden block text-3xl focus:outline-none cursor-pointer" aria-label="Abrir menú" aria-controls="mobile-menu" aria-expanded="false">
-          ☰
+        <button id="menu-btn" data-menu-target="button" data-action="click->menu#toggle" class="md:hidden block rounded focus:outline-none focus:ring-2 focus:ring-indigo-500 cursor-pointer" aria-label="Abrir menú" aria-controls="mobile-menu" aria-expanded="false">
+          <span class="sr-only">Abrir menú</span>
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" class="h-8 w-8 text-gray-700" aria-hidden="true">
+            <path d="M4 6h16M4 12h16M4 18h16" stroke-width="2" stroke-linecap="round" />
+          </svg>
         </button>
 
         <!-- Links escritorio -->
@@ -42,7 +45,7 @@
       </div>
 
       <!-- Menú móvil -->
-      <div id="mobile-menu" data-menu-target="mobile" class="hidden md:hidden bg-white border-t">
+      <div id="mobile-menu" data-menu-target="mobile" class="hidden md:hidden bg-white border-t shadow-sm transition-all duration-200 ease-out">
         <div class="flex flex-col px-4 py-4 space-y-4 text-lg">
           <%= link_to "Inicio", root_path, class: "hover:text-blue-600" %>
           <%= link_to "Talleres", talleres_path, class: "hover:text-blue-600" %>
@@ -54,12 +57,12 @@
     </nav>
 
     <!-- MAIN CONTENT -->
-    <main class="container mx-auto mt-8 px-4">
+    <main class="container mx-auto mt-8 px-4 flex-1">
       <%= yield %>
     </main>
 
     <!-- FOOTER -->
-    <footer class="bg-white mt-16 py-6 shadow-inner">
+    <footer class="bg-white mt-auto py-6 shadow-inner border-t border-gray-200">
       <div class="text-center text-gray-500">
         © <%= Time.now.year %> TalleresApp – Desarrollado por Raúl Rosales
       </div>
