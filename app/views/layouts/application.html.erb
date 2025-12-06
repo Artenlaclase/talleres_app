@@ -18,14 +18,32 @@
 
   <body class="bg-gray-100 text-gray-900 font-inter">
 
-    <!-- NAVBAR -->
-    <nav class="bg-white shadow-md py-4">
-      <div class="container mx-auto flex justify-between items-center px-4">
+    <!-- NAVBAR RESPONSIVE -->
+    <nav class="bg-white shadow-md">
+      <div class="container mx-auto px-4 py-4 flex justify-between items-center">
+        <!-- Logo -->
         <h1 class="text-2xl font-bold text-blue-600">
           <%= link_to "TalleresApp", root_path %>
         </h1>
 
-        <div class="space-x-6 text-lg">
+        <!-- Botón hamburguesa (solo móvil) -->
+        <button id="menu-btn" class="md:hidden block text-3xl focus:outline-none" aria-label="Abrir menú">
+          ☰
+        </button>
+
+        <!-- Links escritorio -->
+        <div class="hidden md:flex space-x-6 text-lg">
+          <%= link_to "Inicio", root_path, class: "hover:text-blue-600" %>
+          <%= link_to "Talleres", talleres_path, class: "hover:text-blue-600" %>
+          <% if user_signed_in? && current_user.admin? %>
+            <%= link_to "Nuevo Taller", new_taller_path, class: "hover:text-blue-600" %>
+          <% end %>
+        </div>
+      </div>
+
+      <!-- Menú móvil -->
+      <div id="mobile-menu" class="hidden md:hidden bg-white border-t">
+        <div class="flex flex-col px-4 py-4 space-y-4 text-lg">
           <%= link_to "Inicio", root_path, class: "hover:text-blue-600" %>
           <%= link_to "Talleres", talleres_path, class: "hover:text-blue-600" %>
           <% if user_signed_in? && current_user.admin? %>
