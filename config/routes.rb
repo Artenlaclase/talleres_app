@@ -1,9 +1,8 @@
 Rails.application.routes.draw do
   namespace :api do
     namespace :v1 do
-      get "estudiantes/index"
-      get "estudiantes/show"
-      get "talleres/index"
+      resources :talleres, only: [:index, :show]
+      resources :estudiantes, only: [:index, :show]
     end
   end
   devise_for :users
