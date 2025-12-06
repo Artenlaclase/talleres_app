@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2025_12_06_195222) do
+ActiveRecord::Schema[8.1].define(version: 2025_12_06_205139) do
   create_table "estudiantes", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.string "curso"
@@ -20,7 +20,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_06_195222) do
     t.index ["taller_id"], name: "index_estudiantes_on_taller_id"
   end
 
-  create_table "tallers", force: :cascade do |t|
+  create_table "talleres", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.integer "cupos"
     t.text "descripcion"
@@ -42,5 +42,5 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_06_195222) do
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
 
-  add_foreign_key "estudiantes", "tallers"
+  add_foreign_key "estudiantes", "talleres"
 end
