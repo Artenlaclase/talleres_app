@@ -171,7 +171,7 @@
               <span>👥 <%= taller.cupos_restantes %>/<%= taller.cupos %> cupos disponibles</span>
             </div>
           </div>
-          <%= button_to "📝 Solicitar Inscripción", request_inscription_taller_path(taller), method: :post,
+          <%= button_to "📝 Solicitar Inscripción", request_inscription_estudiante_path(@estudiante, taller_id: taller.id), method: :post,
                 style: "padding: 8px 16px; background: #10b981; color: white; border: none; border-radius: 6px; font-weight: 600; cursor: pointer; margin-left: 12px;" %>
         </div>
       <% end %>

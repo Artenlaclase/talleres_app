@@ -142,6 +142,38 @@ class EstudiantesController < ApplicationController
     end
   end
 
+  # POST /estudiantes/:id/request_inscription
+  # Acción para que el estudiante solicite inscripción a un taller
+  def request_inscription
+    taller = Taller.find(params[:taller_id])
+
+    # Verificar que no esté ya inscrito en este taller
+    if @estudiante.taller_id == taller.id || taller.inscripciones.exists?(estudiante_id: @estudiante.id)
+      redirect_to @estudiante, alert: "Ya estás inscrito en este taller"
+      return
+    end
+
+    # Contar cuántos talleres tiene el estudiante
+    talleres_actuales = []
+    talleres_actuales << @estudiante.taller_id if @estudiante.taller_id.present?
+    talleres_actuales += @estudiante.talleres_inscritos.where(inscripciones: { estado: 'aprobada' }).pluck(:id)
+    talleres_actuales = talleres_actuales.uniq
+
+    # Verificar si ya alcanzó el máximo de talleres por período
+    if talleres_actuales.count >= @estudiante.max_talleres_por_periodo
+      redirect_to @estudiante, alert: "Ya has alcanzado el máximo de #{@estudiante.max_talleres_por_periodo} talleres por período"
+      return
+    end
+
+    # Crear la inscripción en estado "pendiente"
+    inscripcion = taller.inscripciones.build(estudiante_id: @estudiante.id, estado: 'pendiente')
+    if inscripcion.save
+      redirect_to @estudiante, notice: "⏳ Solicitud de inscripción enviada para #{taller.nombre}. Pendiente de aprobación."
+    else
+      redirect_to @estudiante, alert: "Error al solicitar inscripción: #{inscripcion.errors.full_messages.join(', ')}"
+    end
+  end
+
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_estudiante

@@ -13,11 +13,13 @@ Rails.application.routes.draw do
       get :bulk_new
       post :bulk_create
     end
+    member do
+      post :request_inscription
+    end
   end
   resources :talleres do
     resources :calificaciones, only: [:new, :create, :edit, :update, :destroy]
     resources :inscripciones, only: [:new, :create]
-    post :request_inscription, on: :member
   end
   resources :inscripciones, only: [] do
     member do

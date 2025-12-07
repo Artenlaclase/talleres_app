@@ -50,44 +50,6 @@ class InscripcionesController < ApplicationController
     end
   end
 
-  # POST /talleres/:taller_id/request_inscription
-  # Acción para que el estudiante solicite su propia inscripción
-  def request_inscription
-    taller = Taller.find(params[:taller_id])
-    estudiante = current_user.estudiante
-
-    if estudiante.blank?
-      redirect_to estudiante_path(params[:estudiante_id]), alert: "No se encontró el estudiante"
-      return
-    end
-
-    # Verificar que no esté ya inscrito en este taller
-    if estudiante.taller_id == taller.id || taller.inscripciones.exists?(estudiante_id: estudiante.id)
-      redirect_to estudiante_path(estudiante), alert: "Ya estás inscrito en este taller"
-      return
-    end
-
-    # Contar cuántos talleres tiene el estudiante
-    talleres_actuales = []
-    talleres_actuales << estudiante.taller_id if estudiante.taller_id.present?
-    talleres_actuales += estudiante.talleres_inscritos.where(inscripciones: { estado: 'aprobada' }).pluck(:id)
-    talleres_actuales = talleres_actuales.uniq
-
-    # Verificar si ya alcanzó el máximo de talleres por período
-    if talleres_actuales.count >= estudiante.max_talleres_por_periodo
-      redirect_to estudiante_path(estudiante), alert: "Ya has alcanzado el máximo de #{estudiante.max_talleres_por_periodo} talleres por período"
-      return
-    end
-
-    # Crear la inscripción en estado "pendiente"
-    inscripcion = taller.inscripciones.build(estudiante_id: estudiante.id, estado: 'pendiente')
-    if inscripcion.save
-      redirect_to estudiante_path(estudiante), notice: "⏳ Solicitud de inscripción enviada para #{taller.nombre}. Pendiente de aprobación."
-    else
-      redirect_to estudiante_path(estudiante), alert: "Error al solicitar inscripción: #{inscripcion.errors.full_messages.join(', ')}"
-    end
-  end
-
   # PATCH/POST /inscripciones/:id/approve
   def approve
     if @inscripcion.update(estado: 'aprobada')
