@@ -43,8 +43,11 @@ class TalleresController < ApplicationController
 
   # DELETE /talleres/:id
   def destroy
-    @taller.destroy
-    redirect_to talleres_path, notice: "Taller eliminado correctamente."
+    if @taller.destroy
+      redirect_to talleres_path, notice: "Taller eliminado correctamente."
+    else
+      redirect_to @taller, alert: (@taller.errors.full_messages.presence || ["No se puede eliminar el taller porque tiene estudiantes inscritos."]).to_sentence
+    end
   end
 
 

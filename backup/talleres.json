@@ -1,0 +1,42 @@
+[
+  {
+    "id": 1,
+    "nombre": "Arte",
+    "descripcion": "Pintura y escultura",
+    "fecha": null,
+    "cupos": 20,
+    "inscritos": 5
+  },
+  {
+    "id": 2,
+    "nombre": "Programación",
+    "descripcion": "Python y web",
+    "fecha": null,
+    "cupos": 15,
+    "inscritos": 4
+  },
+  {
+    "id": 3,
+    "nombre": "Introducción a Rails",
+    "descripcion": "Aprende los fundamentos de Ruby on Rails",
+    "fecha": "2025-12-13",
+    "cupos": 20,
+    "inscritos": 3
+  },
+  {
+    "id": 4,
+    "nombre": "Tailwind CSS Avanzado",
+    "descripcion": "Domina Tailwind CSS y crea interfaces modernas",
+    "fecha": "2025-12-20",
+    "cupos": 25,
+    "inscritos": 1
+  },
+  {
+    "id": 5,
+    "nombre": "APIs REST con Rails",
+    "descripcion": "Construye APIs REST profesionales",
+    "fecha": "2025-12-27",
+    "cupos": 15,
+    "inscritos": 2
+  }
+]

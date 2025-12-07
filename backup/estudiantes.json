@@ -1,0 +1,152 @@
+[
+  {
+    "id": 1,
+    "nombre": "Raúl Rosales ",
+    "curso": "primero",
+    "taller_id": 1,
+    "taller": {
+      "id": 1,
+      "nombre": "Arte"
+    }
+  },
+  {
+    "id": 2,
+    "nombre": "Pedro Plomo",
+    "curso": "segundo",
+    "taller_id": 1,
+    "taller": {
+      "id": 1,
+      "nombre": "Arte"
+    }
+  },
+  {
+    "id": 3,
+    "nombre": "Kurt Cobain",
+    "curso": "segundo",
+    "taller_id": 1,
+    "taller": {
+      "id": 1,
+      "nombre": "Arte"
+    }
+  },
+  {
+    "id": 4,
+    "nombre": "Diego Armando",
+    "curso": "primero",
+    "taller_id": 2,
+    "taller": {
+      "id": 2,
+      "nombre": "Programación"
+    }
+  },
+  {
+    "id": 5,
+    "nombre": "Bob Marley",
+    "curso": "tercero",
+    "taller_id": 2,
+    "taller": {
+      "id": 2,
+      "nombre": "Programación"
+    }
+  },
+  {
+    "id": 6,
+    "nombre": "Elisa Linda",
+    "curso": "cuarto",
+    "taller_id": 2,
+    "taller": {
+      "id": 2,
+      "nombre": "Programación"
+    }
+  },
+  {
+    "id": 7,
+    "nombre": "Tita Yali",
+    "curso": "primero",
+    "taller_id": 3,
+    "taller": {
+      "id": 3,
+      "nombre": "Introducción a Rails"
+    }
+  },
+  {
+    "id": 8,
+    "nombre": "Andrés Retacu",
+    "curso": "segundo",
+    "taller_id": 4,
+    "taller": {
+      "id": 4,
+      "nombre": "Tailwind CSS Avanzado"
+    }
+  },
+  {
+    "id": 9,
+    "nombre": "Doroti Perez ",
+    "curso": "tercero",
+    "taller_id": 5,
+    "taller": {
+      "id": 5,
+      "nombre": "APIs REST con Rails"
+    }
+  },
+  {
+    "id": 10,
+    "nombre": "Condor Pasa ",
+    "curso": "primero",
+    "taller_id": 5,
+    "taller": {
+      "id": 5,
+      "nombre": "APIs REST con Rails"
+    }
+  },
+  {
+    "id": 11,
+    "nombre": "Cris  Barnes ",
+    "curso": "tercero",
+    "taller_id": 3,
+    "taller": {
+      "id": 3,
+      "nombre": "Introducción a Rails"
+    }
+  },
+  {
+    "id": 12,
+    "nombre": "Eddie Vedder",
+    "curso": "tercero",
+    "taller_id": 1,
+    "taller": {
+      "id": 1,
+      "nombre": "Arte"
+    }
+  },
+  {
+    "id": 13,
+    "nombre": "Ana Pérez",
+    "curso": "2°A",
+    "taller_id": 1,
+    "taller": {
+      "id": 1,
+      "nombre": "Arte"
+    }
+  },
+  {
+    "id": 14,
+    "nombre": "Luis Gómez",
+    "curso": "3°B",
+    "taller_id": 2,
+    "taller": {
+      "id": 2,
+      "nombre": "Programación"
+    }
+  },
+  {
+    "id": 15,
+    "nombre": "María López",
+    "curso": "1°C",
+    "taller_id": 3,
+    "taller": {
+      "id": 3,
+      "nombre": "Introducción a Rails"
+    }
+  }
+]

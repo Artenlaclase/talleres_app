@@ -5,7 +5,7 @@ class Taller < ApplicationRecord
   validates :descripcion, presence: true
   validates :fecha, presence: true
 
-  has_many :estudiantes, dependent: :nullify
+  has_many :estudiantes, dependent: :restrict_with_error
 
   def cupos_restantes
     [cupos - estudiantes.count, 0].max
