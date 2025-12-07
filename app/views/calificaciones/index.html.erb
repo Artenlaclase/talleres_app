@@ -1,143 +1,230 @@
-<% content_for :title, "Calificaciones" %>
+<% content_for :title, "Calificaciones - Dashboard" %>
 
-<h1 style="font-size: 28px; font-weight: bold; margin-bottom: 20px;">📊 Calificaciones por Estudiante y Taller</h1>
+<div style="padding: 20px;">
+  <h1 style="font-size: 28px; font-weight: bold; margin-bottom: 24px;">📊 Dashboard de Calificaciones</h1>
 
-<!-- FILTROS -->
-<div style="background: #f9fafb; padding: 16px; border: 1px solid #e5e7eb; border-radius: 8px; margin-bottom: 20px;">
-  <%= form_with url: calificaciones_path, method: :get, local: true do %>
-    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; align-items: end;">
-      <div>
-        <label style="display: block; font-weight: 600; margin-bottom: 8px;">Estudiante</label>
-        <select name="estudiante_id" style="width: 100%; border: 1px solid #d1d5db; border-radius: 6px; padding: 8px 12px; font-size: 14px;">
-          <option value="">Todos</option>
-          <% @estudiantes.each do |e| %>
-            <option value="<%= e.id %>" <%= "selected" if params[:estudiante_id].to_s == e.id.to_s %>><%= e.nombre %></option>
-          <% end %>
-        </select>
-      </div>
+  <!-- FILTROS -->
+  <div style="background: white; padding: 20px; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); margin-bottom: 20px;">
+    <h2 style="font-size: 18px; font-weight: bold; margin-bottom: 16px;">🔍 Filtros</h2>
+    <%= form_with method: :get, local: true, style: "display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px;" do |f| %>
       <div>
         <label style="display: block; font-weight: 600; margin-bottom: 8px;">Taller</label>
-        <select name="taller_id" style="width: 100%; border: 1px solid #d1d5db; border-radius: 6px; padding: 8px 12px; font-size: 14px;">
-          <option value="">Todos</option>
-          <% @talleres.each do |t| %>
-            <option value="<%= t.id %>" <%= "selected" if params[:taller_id].to_s == t.id.to_s %>><%= t.nombre %></option>
-          <% end %>
-        </select>
+        <%= f.select :taller_id, 
+            options_from_collection_for_select(Taller.all, :id, :nombre, params[:taller_id]),
+            { prompt: "Todos los talleres" },
+            style: "width: 100%; border: 1px solid #d1d5db; border-radius: 6px; padding: 10px 12px;" %>
       </div>
-      <div style="display: flex; gap: 8px;">
-        <button type="submit" style="padding: 8px 16px; background: #2563eb; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 500;">🔍 Filtrar</button>
-        <%= link_to "Limpiar", calificaciones_path, style: "padding: 8px 16px; background: #e5e7eb; color: #4b5563; border-radius: 6px; text-decoration: none; font-weight: 500; display: inline-block;" %>
+
+      <div>
+        <label style="display: block; font-weight: 600; margin-bottom: 8px;">Estudiante</label>
+        <%= f.select :estudiante_id, 
+            options_from_collection_for_select(Estudiante.all, :id, :nombre, params[:estudiante_id]),
+            { prompt: "Todos los estudiantes" },
+            style: "width: 100%; border: 1px solid #d1d5db; border-radius: 6px; padding: 10px 12px;" %>
       </div>
-    </div>
-  <% end %>
-</div>
 
-<!-- BOTONES DE ACCIÓN -->
-<div style="margin-bottom: 20px;">
-  <%= link_to "➕ Nueva Calificación", new_calificacione_path,
-      style: "padding: 10px 16px; background: #2563eb; color: white; border-radius: 6px; text-decoration: none; font-weight: 500; display: inline-block;" %>
-</div>
+      <div>
+        <label style="display: block; font-weight: 600; margin-bottom: 8px;">Tema/Evaluación</label>
+        <%= f.text_field :tema, placeholder: "Buscar tema...", value: params[:tema],
+            style: "width: 100%; border: 1px solid #d1d5db; border-radius: 6px; padding: 10px 12px;" %>
+      </div>
 
-<!-- PROMEDIOS POR TALLER -->
-<div style="background: white; padding: 20px; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); margin-bottom: 20px;">
-  <h2 style="font-size: 20px; font-weight: bold; margin-bottom: 16px;">📈 Promedio de Calificaciones por Taller</h2>
-  
-  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 16px;">
-    <% @talleres.each do |t| %>
-      <% if @promedios_por_taller[t.id].present? %>
-        <div style="border: 1px solid #e5e7eb; border-radius: 8px; padding: 16px; background: #f9fafb;">
-          <p style="margin: 0 0 8px 0; color: #6b7280; font-size: 14px; font-weight: 500;">
-            <%= t.nombre %>
-          </p>
-          <p style="margin: 0; font-size: 24px; font-weight: 700; color: <%= if @promedios_por_taller[t.id] >= 5.5 then '#16a34a' elsif @promedios_por_taller[t.id] >= 4.0 then '#f59e0b' else '#dc2626' end %>;">
-            <%= number_with_precision(@promedios_por_taller[t.id], precision: 1) %>/7.0
-          </p>
-          <p style="margin: 8px 0 0 0; color: #9ca3af; font-size: 12px;">
-            <%= Calificacion.where(taller_id: t.id).count %> estudiante(s) calificado(s)
-          </p>
-        </div>
-      <% end %>
+      <div style="display: flex; align-items: flex-end; gap: 8px;">
+        <%= f.submit "🔍 Filtrar", style: "padding: 10px 16px; background: #2563eb; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 500;" %>
+        <%= link_to "✕ Limpiar", calificaciones_path, style: "padding: 10px 16px; background: #e5e7eb; color: #4b5563; border-radius: 6px; text-decoration: none; font-weight: 500;" %>
+      </div>
     <% end %>
   </div>
-</div>
 
-<!-- DATOS -->
-<div style="background: white; padding: 20px; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
-  <% if @calificaciones.any? %>
+  <!-- ESTADÍSTICAS GENERALES -->
+  <% 
+    calificaciones_filtradas = Calificacion.all
+    calificaciones_filtradas = calificaciones_filtradas.where(taller_id: params[:taller_id]) if params[:taller_id].present?
+    calificaciones_filtradas = calificaciones_filtradas.where(estudiante_id: params[:estudiante_id]) if params[:estudiante_id].present?
+    calificaciones_filtradas = calificaciones_filtradas.where("tema LIKE ?", "%#{params[:tema]}%") if params[:tema].present?
     
-    <!-- VERSION DESKTOP (TABLA) -->
-    <div style="display: none; overflow-x: auto;" class="desktop-view">
-      <table style="width: 100%; border-collapse: collapse;">
-        <thead>
-          <tr style="background: #f3f4f6; border-bottom: 2px solid #d1d5db;">
-            <th style="padding: 12px; text-align: left; font-weight: 600;">Estudiante</th>
-            <th style="padding: 12px; text-align: left; font-weight: 600;">Taller</th>
-            <th style="padding: 12px; text-align: left; font-weight: 600;">Nota</th>
-            <th style="padding: 12px; text-align: left; font-weight: 600;">Descripción</th>
-            <th style="padding: 12px; text-align: left; font-weight: 600;">Acciones</th>
-          </tr>
-        </thead>
-        <tbody>
-          <% @calificaciones.each do |c| %>
-            <tr style="border-bottom: 1px solid #e5e7eb;">
-              <td style="padding: 12px;"><strong><%= c.estudiante.nombre %></strong></td>
-              <td style="padding: 12px;"><%= c.taller.nombre %></td>
-              <td style="padding: 12px;">
-                <span style="<%= if c.nota >= 5.5 then 'color: #16a34a; font-weight: 600;' elsif c.nota >= 4.0 then 'color: #f59e0b; font-weight: 600;' else 'color: #dc2626; font-weight: 600;' end %>">
-                  <%= number_with_precision(c.nota, precision: 1) %>/7.0
-                </span>
-              </td>
-              <td style="padding: 12px; max-width: 300px; word-break: break-word;"><%= truncate(c.descripcion, length: 50) %></td>
-              <td style="padding: 12px; white-space: nowrap;">
-                <%= link_to "👁️ Ver", calificacione_path(c.id), style: "margin-right: 10px; color: #2563eb; text-decoration: none;" %>
-                <%= link_to "✏️ Editar", edit_calificacione_path(c.id), style: "margin-right: 10px; color: #f59e0b; text-decoration: none;" %>
-                <%= link_to "🗑️ Eliminar", calificacione_path(c.id), method: :delete,
-                      data: { confirm: "¿Seguro?" }, style: "color: #dc2626; text-decoration: none;" %>
-              </td>
-            </tr>
-          <% end %>
-        </tbody>
-      </table>
+    promedio_general = calificaciones_filtradas.any? ? (calificaciones_filtradas.sum(&:nota) / calificaciones_filtradas.count).round(1) : 0
+    max_nota = calificaciones_filtradas.any? ? calificaciones_filtradas.max_by(&:nota).nota : 0
+    min_nota = calificaciones_filtradas.any? ? calificaciones_filtradas.min_by(&:nota).nota : 0
+  %>
+
+  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 20px;">
+    <div style="background: #f0f9ff; border: 1px solid #bfdbfe; border-radius: 8px; padding: 16px;">
+      <p style="margin: 0; color: #1e40af; font-size: 14px; font-weight: 500;">Total de Calificaciones</p>
+      <p style="margin: 8px 0 0 0; font-size: 28px; font-weight: bold; color: #1e40af;"><%= calificaciones_filtradas.count %></p>
     </div>
 
-    <!-- VERSION MOBILE (CARDS) -->
-    <div style="display: block;">
-      <% @calificaciones.each do |c| %>
-        <div style="background: white; border: 1px solid #e5e7eb; border-radius: 8px; padding: 16px; margin-bottom: 16px; box-shadow: 0 1px 2px rgba(0,0,0,0.05);">
-          <div style="margin-bottom: 12px;">
-            <h2 style="font-size: 16px; font-weight: 600; color: #1f2937; margin: 0;"><%= c.estudiante.nombre %></h2>
-            <p style="font-size: 12px; color: #9ca3af; margin: 4px 0;">Taller: <%= c.taller.nombre %></p>
-          </div>
-          
-          <div style="background: #f9fafb; padding: 12px; border-radius: 6px; margin-bottom: 12px;">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-              <span style="color: #9ca3af; font-weight: 500;">Nota:</span>
-              <span style="<%= if c.nota >= 5.5 then 'color: #16a34a; font-weight: 600; font-size: 20px;' elsif c.nota >= 4.0 then 'color: #f59e0b; font-weight: 600; font-size: 20px;' else 'color: #dc2626; font-weight: 600; font-size: 20px;' end %>">
-                <%= number_with_precision(c.nota, precision: 1) %>/7.0
-              </span>
-            </div>
-            <% if c.descripcion.present? %>
-              <p style="margin: 8px 0; font-size: 14px; color: #4b5563;"><strong>Comentario:</strong> <%= c.descripcion %></p>
+    <div style="background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 8px; padding: 16px;">
+      <p style="margin: 0; color: #166534; font-size: 14px; font-weight: 500;">Promedio General</p>
+      <p style="margin: 8px 0 0 0; font-size: 28px; font-weight: bold; color: #166534;"><%= number_with_precision(promedio_general, precision: 1) %>/7.0</p>
+    </div>
+
+    <div style="background: #fef3c7; border: 1px solid #fcd34d; border-radius: 8px; padding: 16px;">
+      <p style="margin: 0; color: #92400e; font-size: 14px; font-weight: 500;">Nota Máxima</p>
+      <p style="margin: 8px 0 0 0; font-size: 28px; font-weight: bold; color: #92400e;"><%= number_with_precision(max_nota, precision: 1) %>/7.0</p>
+    </div>
+
+    <div style="background: #fee2e2; border: 1px solid #fca5a5; border-radius: 8px; padding: 16px;">
+      <p style="margin: 0; color: #7f1d1d; font-size: 14px; font-weight: 500;">Nota Mínima</p>
+      <p style="margin: 8px 0 0 0; font-size: 28px; font-weight: bold; color: #7f1d1d;"><%= number_with_precision(min_nota, precision: 1) %>/7.0</p>
+    </div>
+  </div>
+
+  <!-- TABLA DE CALIFICACIONES -->
+  <div style="background: white; padding: 20px; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); margin-bottom: 20px;">
+    <h2 style="font-size: 18px; font-weight: bold; margin-bottom: 16px;">📋 Detalle de Calificaciones</h2>
+    
+    <% if params[:taller_id].present? %>
+      <!-- VISTA ESPECIAL: POR TALLER CON ESTUDIANTES -->
+      <% taller = Taller.find(params[:taller_id]) %>
+      <h3 style="font-size: 16px; font-weight: 600; color: #2563eb; margin-bottom: 16px;">
+        📌 Taller: <%= taller.nombre %>
+      </h3>
+
+      <div style="overflow-x: auto;">
+        <table style="width: 100%; border-collapse: collapse; font-size: 14px;">
+          <thead>
+            <tr style="background: #f3f4f6; border-bottom: 2px solid #d1d5db;">
+              <th style="padding: 12px; text-align: left; font-weight: 600; min-width: 150px;">Estudiante</th>
+              <% 
+                # Obtener todas las evaluaciones únicas de este taller
+                evaluaciones = Calificacion.where(taller_id: taller.id).pluck(:nombre_evaluacion).uniq.sort
+              %>
+              <% evaluaciones.each do |eval_name| %>
+                <th style="padding: 12px; text-align: center; font-weight: 600; min-width: 120px;"><%= eval_name %></th>
+              <% end %>
+              <th style="padding: 12px; text-align: center; font-weight: 600; min-width: 100px;">Promedio</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% taller.estudiantes.each do |estudiante| %>
+              <% cals = calificaciones_filtradas.where(estudiante_id: estudiante.id) %>
+              <% promedio_est = cals.any? ? (cals.sum(&:nota) / cals.count).round(1) : nil %>
+              <tr style="border-bottom: 1px solid #e5e7eb;">
+                <td style="padding: 12px; font-weight: 600;"><%= estudiante.nombre %></td>
+                <% evaluaciones.each do |eval_name| %>
+                  <% cal = cals.find_by(nombre_evaluacion: eval_name) %>
+                  <td style="padding: 12px; text-align: center;">
+                    <% if cal %>
+                      <div>
+                        <span style="<%= if cal.nota >= 5.5 then 'color: #16a34a; font-weight: 600;' elsif cal.nota >= 4.0 then 'color: #f59e0b; font-weight: 600;' else 'color: #dc2626; font-weight: 600;' end %>">
+                          <%= number_with_precision(cal.nota, precision: 1) %>
+                        </span>
+                      </div>
+                      <div style="font-size: 11px; color: #666; margin-top: 2px;">(<%= cal.tema %>)</div>
+                    <% else %>
+                      <span style="color: #d1d5db;">-</span>
+                    <% end %>
+                  </td>
+                <% end %>
+                <td style="padding: 12px; text-align: center; font-weight: 600;">
+                  <% if promedio_est %>
+                    <span style="<%= if promedio_est >= 5.5 then 'color: #16a34a;' elsif promedio_est >= 4.0 then 'color: #f59e0b;' else 'color: #dc2626;' end %>">
+                      <%= number_with_precision(promedio_est, precision: 1) %>
+                    </span>
+                  <% else %>
+                    <span style="color: #d1d5db;">-</span>
+                  <% end %>
+                </td>
+              </tr>
             <% end %>
+          </tbody>
+        </table>
+      </div>
+    <% else %>
+      <!-- VISTA NORMAL: TABLA DETALLADA -->
+      <div style="overflow-x: auto;">
+        <table style="width: 100%; border-collapse: collapse; font-size: 14px;">
+          <thead>
+            <tr style="background: #f3f4f6; border-bottom: 2px solid #d1d5db;">
+              <th style="padding: 12px; text-align: left; font-weight: 600;">Estudiante</th>
+              <th style="padding: 12px; text-align: left; font-weight: 600;">Taller</th>
+              <th style="padding: 12px; text-align: left; font-weight: 600;">Evaluación</th>
+              <th style="padding: 12px; text-align: left; font-weight: 600;">Tema</th>
+              <th style="padding: 12px; text-align: center; font-weight: 600;">Nota</th>
+              <th style="padding: 12px; text-align: left; font-weight: 600;">Comentario</th>
+              <% if user_signed_in? && current_user.admin? %>
+                <th style="padding: 12px; text-align: center; font-weight: 600;">Acciones</th>
+              <% end %>
+            </tr>
+          </thead>
+          <tbody>
+            <% calificaciones_filtradas.includes(:estudiante, :taller).order(created_at: :desc).each do |c| %>
+              <tr style="border-bottom: 1px solid #e5e7eb;">
+                <td style="padding: 12px;"><strong><%= c.estudiante.nombre %></strong></td>
+                <td style="padding: 12px;"><%= c.taller.nombre %></td>
+                <td style="padding: 12px;"><%= c.nombre_evaluacion %></td>
+                <td style="padding: 12px; max-width: 150px; word-break: break-word;"><%= c.tema %></td>
+                <td style="padding: 12px; text-align: center;">
+                  <span style="<%= if c.nota >= 5.5 then 'color: #16a34a; font-weight: 600;' elsif c.nota >= 4.0 then 'color: #f59e0b; font-weight: 600;' else 'color: #dc2626; font-weight: 600;' end %>">
+                    <%= number_with_precision(c.nota, precision: 1) %>/7.0
+                  </span>
+                </td>
+                <td style="padding: 12px; max-width: 200px; word-break: break-word;"><%= truncate(c.descripcion, length: 50) %></td>
+                <% if user_signed_in? && current_user.admin? %>
+                  <td style="padding: 12px; text-align: center; white-space: nowrap;">
+                    <%= link_to "✏️", edit_taller_calificacione_path(c.taller, c), style: "margin-right: 8px; color: #f59e0b; text-decoration: none;" %>
+                    <%= link_to "🗑️", taller_calificacione_path(c.taller, c), method: :delete, 
+                          data: { confirm: "¿Eliminar?" }, style: "color: #dc2626; text-decoration: none;" %>
+                  </td>
+                <% end %>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    <% end %>
+
+    <% if calificaciones_filtradas.empty? %>
+      <p style="color: #9ca3af; text-align: center; padding: 20px;">No hay calificaciones que coincidan con los filtros.</p>
+    <% end %>
+  </div>
+
+  <!-- ESTADÍSTICAS POR TALLER -->
+  <div style="background: white; padding: 20px; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); margin-bottom: 20px;">
+    <h2 style="font-size: 18px; font-weight: bold; margin-bottom: 16px;">📈 Estadísticas por Taller</h2>
+    
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 16px;">
+      <% Taller.all.each do |taller| %>
+        <% cals = calificaciones_filtradas.where(taller_id: taller.id) %>
+        <% if cals.any? %>
+          <% promedio_taller = (cals.sum(&:nota) / cals.count).round(1) %>
+          <div style="border: 1px solid #e5e7eb; border-radius: 8px; padding: 16px; background: #f9fafb;">
+            <p style="margin: 0 0 8px 0; color: #1f2937; font-weight: 600; font-size: 16px;"><%= taller.nombre %></p>
+            <p style="margin: 0 4px 0 0; color: #6b7280; font-size: 14px;">
+              📊 Promedio: <strong style="<%= if promedio_taller >= 5.5 then 'color: #16a34a;' elsif promedio_taller >= 4.0 then 'color: #f59e0b;' else 'color: #dc2626;' end %>"><%= number_with_precision(promedio_taller, precision: 1) %>/7.0</strong>
+            </p>
+            <p style="margin: 4px 0 0 0; color: #6b7280; font-size: 14px;">
+              👥 Estudiantes: <strong><%= cals.distinct.count(:estudiante_id) %></strong>
+            </p>
+            <p style="margin: 4px 0 0 0; color: #6b7280; font-size: 14px;">
+              📝 Calificaciones: <strong><%= cals.count %></strong>
+            </p>
           </div>
-          
-          <div style="display: flex; flex-wrap: wrap; gap: 8px;">
-            <%= link_to "👁️ Ver", calificacione_path(c.id), style: "padding: 8px 12px; background: #2563eb; color: white; border-radius: 4px; text-decoration: none; font-size: 14px; flex-grow: 1; text-align: center;" %>
-            <%= link_to "✏️ Editar", edit_calificacione_path(c.id), style: "padding: 8px 12px; background: #f59e0b; color: white; border-radius: 4px; text-decoration: none; font-size: 14px; flex-grow: 1; text-align: center;" %>
-            <%= link_to "🗑️ Eliminar", calificacione_path(c.id), method: :delete,
-                  data: { confirm: "¿Seguro?" }, style: "padding: 8px 12px; background: #dc2626; color: white; border-radius: 4px; text-decoration: none; font-size: 14px; flex-grow: 1; text-align: center;" %>
-          </div>
+        <% end %>
+      <% end %>
+    </div>
+  </div>
+
+  <!-- ESTADÍSTICAS POR TEMA/EVALUACIÓN -->
+  <div style="background: white; padding: 20px; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+    <h2 style="font-size: 18px; font-weight: bold; margin-bottom: 16px;">🎯 Rendimiento por Tema</h2>
+    
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 16px;">
+      <% calificaciones_filtradas.group_by(&:tema).each do |tema, cals| %>
+        <% next if tema.blank? %>
+        <% promedio_tema = (cals.sum(&:nota) / cals.count).round(1) %>
+        <div style="border: 1px solid #e5e7eb; border-radius: 8px; padding: 16px; background: #f9fafb;">
+          <p style="margin: 0 0 8px 0; color: #1f2937; font-weight: 600; font-size: 16px;"><%= tema %></p>
+          <p style="margin: 0 4px 0 0; color: #6b7280; font-size: 14px;">
+            📊 Promedio: <strong style="<%= if promedio_tema >= 5.5 then 'color: #16a34a;' elsif promedio_tema >= 4.0 then 'color: #f59e0b;' else 'color: #dc2626;' end %>"><%= number_with_precision(promedio_tema, precision: 1) %>/7.0</strong>
+          </p>
+          <p style="margin: 4px 0 0 0; color: #6b7280; font-size: 14px;">
+            📝 Evaluaciones: <strong><%= cals.count %></strong>
+          </p>
         </div>
       <% end %>
     </div>
+  </div>
 
-    <style>
-      @media (min-width: 768px) {
-        .desktop-view { display: block !important; }
-        div[style*="display: block"]:last-of-type { display: none !important; }
-      }
-    </style>
-  <% else %>
-    <p style="text-align: center; color: #6b7280; padding: 20px;">No hay calificaciones registradas. <%= link_to "Crear una", new_calificacione_path, style: "color: #2563eb; text-decoration: underline;" %></p>
-  <% end %>
 </div>

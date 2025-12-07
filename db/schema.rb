@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2025_12_07_041435) do
+ActiveRecord::Schema[8.1].define(version: 2025_12_07_043655) do
   create_table "calificaciones", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.text "descripcion"
@@ -18,6 +18,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_07_041435) do
     t.string "nombre_evaluacion"
     t.decimal "nota", precision: 5, scale: 2, null: false
     t.integer "taller_id", null: false
+    t.string "tema"
     t.datetime "updated_at", null: false
     t.index ["estudiante_id"], name: "index_calificaciones_on_estudiante_id"
     t.index ["taller_id"], name: "index_calificaciones_on_taller_id"
@@ -26,6 +27,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_07_041435) do
   create_table "estudiantes", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.string "curso"
+    t.integer "max_talleres_por_periodo", default: 3
     t.string "nombre"
     t.integer "taller_id", null: false
     t.datetime "updated_at", null: false
