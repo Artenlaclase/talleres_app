@@ -1,5 +1,17 @@
 <h1 class="text-2xl font-bold mb-6">Editar Taller</h1>
 
+<div class="mb-4 p-4 bg-yellow-50 border border-yellow-300 text-yellow-800 rounded">
+  <p class="font-semibold">Aviso:</p>
+  <p>
+    Estudiantes inscritos: <strong><%= @taller.estudiantes.count %></strong>.
+    Los cupos no pueden ser menores a este número.
+  </p>
+  <p>
+    Cupos totales actuales: <strong><%= @taller.cupos %></strong> · Cupos disponibles: <strong><%= @taller.cupos_restantes %></strong>
+  </p>
+  <p class="text-sm text-yellow-700 mt-1">Si necesita reducir cupos por debajo de los inscritos, primero gestione las inscripciones.</p>
+  </div>
+
 <%= render "form" %>
 
 <div class="mt-4">

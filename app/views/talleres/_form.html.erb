@@ -45,14 +45,16 @@
     <% end %>
   </div>
 
-  <div>
+  <div data-controller="cupos" data-cupos-inscritos-value="<%= @taller.estudiantes.count %>">
     <%= form.label :cupos, "Cupos disponibles", class: "block font-semibold mb-1" %>
     <%= form.number_field :cupos,
         min: 1,
         step: 1,
         required: true,
         placeholder: "Ej. 20",
+        data: { cupos_target: "input" },
         class: "w-full border border-gray-300 rounded px-3 py-2 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500" %>
+    <p data-cupos-target="warning" class="hidden text-sm mt-1"></p>
     <% if @taller.errors[:cupos].present? %>
       <p class="text-sm text-red-600 mt-1"><%= @taller.errors[:cupos].first %></p>
     <% else %>

@@ -15,7 +15,7 @@ class EstudiantesController < ApplicationController
 
   # GET /estudiantes/new
   def new
-    @estudiante = Estudiante.new
+    @estudiante = Estudiante.new(estudiante_params_from_query)
   end
 
   # GET /estudiantes/bulk_new
@@ -101,5 +101,14 @@ class EstudiantesController < ApplicationController
     # Only allow a list of trusted parameters through.
     def estudiante_params
       params.require(:estudiante).permit(:nombre, :curso, :taller_id)
+    end
+
+    def estudiante_params_from_query
+      # Permite precargar taller_id desde query: ?estudiante[taller_id]=1
+      if params[:estudiante].present?
+        params.require(:estudiante).permit(:taller_id)
+      else
+        {}
+      end
     end
 end

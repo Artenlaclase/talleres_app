@@ -26,15 +26,23 @@
     <% end %>
   </div>
 
-  <div>
-    <%= form.label :taller_id, "Taller", class: "block font-semibold mb-1" %>
-    <%= form.collection_select :taller_id, Taller.all, :id, :nombre,
-        { prompt: "Seleccione un taller" },
-        { class: "w-full border border-gray-300 rounded px-3 py-2 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500" } %>
-    <% if estudiante.errors[:taller].present? || estudiante.errors[:taller_id].present? %>
-      <p class="text-sm text-red-600 mt-1"><%= (estudiante.errors[:taller].presence || estudiante.errors[:taller_id]).first %></p>
-    <% end %>
-  </div>
+  <% if estudiante.taller_id.present? %>
+    <div>
+      <label class="block font-semibold mb-1">Taller</label>
+      <p class="px-3 py-2 border border-gray-200 rounded bg-gray-50"><%= Taller.find(estudiante.taller_id).nombre %></p>
+      <%= form.hidden_field :taller_id, value: estudiante.taller_id %>
+    </div>
+  <% else %>
+    <div>
+      <%= form.label :taller_id, "Taller", class: "block font-semibold mb-1" %>
+      <%= form.collection_select :taller_id, Taller.all, :id, :nombre,
+          { prompt: "Seleccione un taller" },
+          { class: "w-full border border-gray-300 rounded px-3 py-2 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500" } %>
+      <% if estudiante.errors[:taller].present? || estudiante.errors[:taller_id].present? %>
+        <p class="text-sm text-red-600 mt-1"><%= (estudiante.errors[:taller].presence || estudiante.errors[:taller_id]).first %></p>
+      <% end %>
+    </div>
+  <% end %>
 
   <div class="flex items-center gap-2">
     <%= form.submit (estudiante.new_record? ? "Crear Estudiante" : "Actualizar Estudiante"), class: "px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700" %>

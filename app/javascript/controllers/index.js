@@ -10,3 +10,7 @@ application.register("menu", MenuController)
 // Explicit flash controller registration
 import FlashController from "controllers/flash_controller"
 application.register("flash", FlashController)
+
+// Cupos live validation controller
+import CuposController from "controllers/cupos_controller"
+application.register("cupos", CuposController)
