@@ -15,15 +15,18 @@ class TalleresController < ApplicationController
     
     # Obtener todos los estudiantes del taller:
     # 1. Los que tienen taller_id = @taller.id
-    # 2. Los que tienen inscripciones en este taller
+    # 2. Los que tienen inscripciones APROBADAS en este taller
     # 3. Los que tienen calificaciones en este taller
     estudiantes_por_taller = Estudiante.where(taller_id: @taller.id)
-    estudiantes_por_inscripcion = @taller.estudiantes_inscritos
+    estudiantes_por_inscripcion = @taller.estudiantes_inscritos.where(inscripciones: { estado: 'aprobada' })
     estudiantes_por_calificaciones = Estudiante.joins(:calificaciones)
                                                .where(calificaciones: { taller_id: @taller.id })
                                                .distinct
     
     @estudiantes_taller = (estudiantes_por_taller.to_a + estudiantes_por_inscripcion.to_a + estudiantes_por_calificaciones.to_a).uniq { |e| e.id }
+    
+    # Cargar inscripciones pendientes para aprobación
+    @inscripciones_pendientes = @taller.inscripciones.where(estado: 'pendiente').includes(:estudiante)
   end
 
   # GET /talleres/new

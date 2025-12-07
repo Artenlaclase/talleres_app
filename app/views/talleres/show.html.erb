@@ -20,6 +20,29 @@
   </div>
 </div>
 
+<!-- INSCRIPCIONES PENDIENTES -->
+<% if @inscripciones_pendientes.any? %>
+  <div style="background: #fef3c7; border: 1px solid #fcd34d; padding: 20px; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); margin-bottom: 24px;">
+    <h2 style="font-size: 20px; font-weight: bold; margin-bottom: 16px; color: #92400e;">⏳ Inscripciones Pendientes de Aprobación (<%= @inscripciones_pendientes.count %>)</h2>
+    <div style="display: grid; gap: 12px;">
+      <% @inscripciones_pendientes.each do |inscripcion| %>
+        <div style="background: white; border: 1px solid #fcd34d; border-radius: 6px; padding: 16px; display: flex; justify-content: space-between; align-items: center;">
+          <div>
+            <p style="margin: 0; font-weight: 600; color: #1f2937; font-size: 16px;"><%= inscripcion.estudiante.nombre %></p>
+            <p style="margin: 4px 0 0 0; color: #6b7280; font-size: 14px;"><%= inscripcion.estudiante.curso %></p>
+          </div>
+          <div style="display: flex; gap: 8px;">
+            <%= button_to "✓ Aprobar", approve_inscripcion_path(inscripcion), method: :patch,
+                  style: "padding: 8px 16px; background: #16a34a; color: white; border: none; border-radius: 6px; font-weight: 600; cursor: pointer;" %>
+            <%= button_to "✗ Rechazar", reject_inscripcion_path(inscripcion), method: :patch,
+                  style: "padding: 8px 16px; background: #dc2626; color: white; border: none; border-radius: 6px; font-weight: 600; cursor: pointer;" %>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </div>
+<% end %>
+
 <!-- ESTUDIANTES INSCRITOS -->
 <div style="background: white; padding: 20px; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); margin-bottom: 24px;">
   <h2 style="font-size: 20px; font-weight: bold; margin-bottom: 16px;">👥 Estudiantes inscritos (<%= @estudiantes_taller.count %>)</h2>

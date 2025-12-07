@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2025_12_07_052214) do
+ActiveRecord::Schema[8.1].define(version: 2025_12_07_195745) do
   create_table "calificaciones", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.text "descripcion"
@@ -35,8 +35,10 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_07_052214) do
   end
 
   create_table "inscripciones", force: :cascade do |t|
+    t.string "estado", default: "pendiente"
     t.integer "estudiante_id", null: false
     t.integer "taller_id", null: false
+    t.index ["estado"], name: "index_inscripciones_on_estado"
     t.index ["estudiante_id", "taller_id"], name: "index_inscripciones_on_estudiante_id_and_taller_id", unique: true
     t.index ["estudiante_id"], name: "index_inscripciones_on_estudiante_id"
     t.index ["taller_id"], name: "index_inscripciones_on_taller_id"

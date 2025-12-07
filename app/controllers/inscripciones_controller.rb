@@ -2,6 +2,7 @@ class InscripcionesController < ApplicationController
   before_action :authenticate_user!
   before_action :require_admin!
   before_action :set_taller, only: %i[new create]
+  before_action :set_inscripcion, only: %i[approve reject]
 
   # GET /talleres/:taller_id/inscripciones/new
   def new
@@ -40,12 +41,30 @@ class InscripcionesController < ApplicationController
       return
     end
 
-    # Crear la inscripción
-    inscripcion = @taller.inscripciones.build(estudiante_id: estudiante.id)
+    # Crear la inscripción en estado "pendiente"
+    inscripcion = @taller.inscripciones.build(estudiante_id: estudiante.id, estado: 'pendiente')
     if inscripcion.save
-      redirect_to @taller, notice: "✓ #{estudiante.nombre} inscrito exitosamente en #{@taller.nombre}"
+      redirect_to @taller, notice: "⏳ Solicitud de inscripción enviada para #{estudiante.nombre}. Pendiente de aprobación."
     else
       redirect_to @taller, alert: "Error al inscribir: #{inscripcion.errors.full_messages.join(', ')}"
+    end
+  end
+
+  # PATCH/POST /inscripciones/:id/approve
+  def approve
+    if @inscripcion.update(estado: 'aprobada')
+      redirect_to @inscripcion.taller, notice: "✓ Inscripción de #{@inscripcion.estudiante.nombre} aprobada"
+    else
+      redirect_to @inscripcion.taller, alert: "Error al aprobar inscripción"
+    end
+  end
+
+  # PATCH/POST /inscripciones/:id/reject
+  def reject
+    if @inscripcion.update(estado: 'rechazada')
+      redirect_to @inscripcion.taller, notice: "✗ Inscripción de #{@inscripcion.estudiante.nombre} rechazada"
+    else
+      redirect_to @inscripcion.taller, alert: "Error al rechazar inscripción"
     end
   end
 
@@ -53,5 +72,9 @@ class InscripcionesController < ApplicationController
 
   def set_taller
     @taller = Taller.find(params[:taller_id])
+  end
+
+  def set_inscripcion
+    @inscripcion = Inscripcion.find(params[:id])
   end
 end
