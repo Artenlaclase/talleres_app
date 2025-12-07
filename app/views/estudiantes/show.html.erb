@@ -34,8 +34,6 @@
             style: "padding: 8px 16px; background: #f59e0b; color: white; border-radius: 6px; text-decoration: none; font-weight: 500;" %>
       <%= button_to "🗑️ Eliminar", @estudiante, method: :delete, data: { confirm: "¿Eliminar?" },
             style: "padding: 8px 16px; background: #dc2626; color: white; border-radius: 6px; font-weight: 500; border: none; cursor: pointer;" %>
-      <%= link_to "➕ Otro Estudiante", new_estudiante_path,
-        style: "padding: 8px 16px; background: #3b82f6; color: white; border-radius: 6px; text-decoration: none; font-weight: 500;" %>
     <% end %>
     <%= link_to "← Volver", estudiantes_path,
           style: "padding: 8px 16px; background: #6b7280; color: white; border-radius: 6px; text-decoration: none; font-weight: 500;" %>
@@ -131,6 +129,33 @@
   <% end %>
 </div>
 
+<!-- INSCRIPCIONES PENDIENTES -->
+<% if @inscripciones_pendientes.any? %>
+  <div style="background: #fef3c7; border: 1px solid #fcd34d; padding: 24px; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); margin-bottom: 24px;">
+    <h2 style="font-size: 22px; font-weight: bold; margin-bottom: 16px; color: #92400e;">⏳ Inscripciones Pendientes de Aprobación (<%= @inscripciones_pendientes.count %>)</h2>
+    <p style="color: #92400e; margin-bottom: 16px; font-size: 14px;">Tu solicitud ha sido enviada. El profesor del taller revisará y aprobará tu inscripción pronto.</p>
+    
+    <div style="display: grid; gap: 12px;">
+      <% @inscripciones_pendientes.each do |inscripcion| %>
+        <div style="background: white; border: 1px solid #fcd34d; border-radius: 6px; padding: 16px; display: flex; justify-content: space-between; align-items: center;">
+          <div style="flex: 1;">
+            <h3 style="font-size: 16px; font-weight: bold; margin-bottom: 4px; color: #1f2937;">
+              <%= inscripcion.taller.nombre %>
+            </h3>
+            <p style="color: #6b7280; font-size: 14px; margin-bottom: 4px;"><%= truncate(inscripcion.taller.descripcion, length: 100) %></p>
+            <p style="font-size: 12px; color: #9ca3af;">
+              📅 <%= inscripcion.taller.fecha %> | 👥 <%= inscripcion.taller.cupos_restantes %>/<%= inscripcion.taller.cupos %> cupos
+            </p>
+          </div>
+          <div style="background: #92400e; color: white; border-radius: 6px; padding: 8px 12px; text-align: center; min-width: 100px; font-weight: 600; font-size: 13px;">
+            En espera...
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </div>
+<% end %>
+
 <!-- TALLERES DISPONIBLES PARA INSCRIBIRSE -->
 <% if @talleres_faltantes > 0 && @talleres_disponibles.any? %>
   <div style="background: white; padding: 24px; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
@@ -146,10 +171,8 @@
               <span>👥 <%= taller.cupos_restantes %>/<%= taller.cupos %> cupos disponibles</span>
             </div>
           </div>
-          <% if user_signed_in? && current_user.admin? %>
-            <%= link_to "➕ Inscribir", new_taller_inscripcione_path(taller),
-                  style: "padding: 8px 16px; background: #10b981; color: white; border-radius: 6px; font-weight: 600; text-decoration: none; margin-left: 12px; display: inline-block;" %>
-          <% end %>
+          <%= button_to "📝 Solicitar Inscripción", request_inscription_taller_path(taller), method: :post,
+                style: "padding: 8px 16px; background: #10b981; color: white; border: none; border-radius: 6px; font-weight: 600; cursor: pointer; margin-left: 12px;" %>
         </div>
       <% end %>
     </div>

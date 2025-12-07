@@ -31,7 +31,7 @@ class EstudiantesController < ApplicationController
 
   # GET /estudiantes/1 or /estudiantes/1.json
   def show
-    # Cargar talleres de 3 fuentes: taller_id principal, calificaciones e inscripciones
+    # Cargar talleres de 3 fuentes: taller_id principal, calificaciones e inscripciones APROBADAS
     talleres_set = Set.new
     talleres_set.add(@estudiante.taller_id) if @estudiante.taller_id.present?
     
@@ -39,15 +39,19 @@ class EstudiantesController < ApplicationController
       talleres_set.add(taller_id)
     end
     
-    Inscripcion.where(estudiante_id: @estudiante.id).distinct.pluck(:taller_id).each do |taller_id|
+    Inscripcion.where(estudiante_id: @estudiante.id, estado: 'aprobada').distinct.pluck(:taller_id).each do |taller_id|
       talleres_set.add(taller_id)
     end
     
     @talleres_inscritos = Taller.where(id: talleres_set.to_a).order(:nombre)
     @talleres_faltantes = @estudiante.max_talleres_por_periodo - @talleres_inscritos.count
     
-    # Cargar todos los talleres disponibles para la opción de inscripción
-    @talleres_disponibles = Taller.where.not(id: talleres_set.to_a).order(:nombre)
+    # Cargar todas las inscripciones del estudiante (para mostrar pendientes)
+    @inscripciones_pendientes = Inscripcion.where(estudiante_id: @estudiante.id, estado: 'pendiente').includes(:taller)
+    
+    # Cargar todos los talleres disponibles (excluyendo inscritos + pendientes)
+    talleres_con_inscripcion = talleres_set.to_a + Inscripcion.where(estudiante_id: @estudiante.id, estado: 'pendiente').pluck(:taller_id)
+    @talleres_disponibles = Taller.where.not(id: talleres_con_inscripcion.uniq).order(:nombre)
     
     # Cargar calificaciones agrupadas por taller
     @calificaciones_por_taller = {}

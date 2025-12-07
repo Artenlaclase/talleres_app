@@ -17,6 +17,7 @@ Rails.application.routes.draw do
   resources :talleres do
     resources :calificaciones, only: [:new, :create, :edit, :update, :destroy]
     resources :inscripciones, only: [:new, :create]
+    post :request_inscription, on: :member
   end
   resources :inscripciones, only: [] do
     member do
