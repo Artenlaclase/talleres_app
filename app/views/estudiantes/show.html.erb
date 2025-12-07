@@ -50,69 +50,79 @@
     <div style="display: grid; gap: 12px;">
       <% @talleres_inscritos.each do |taller| %>
         <div style="border: 2px solid #e5e7eb; border-radius: 8px; padding: 16px; background: #f9fafb;">
-          <div style="display: flex; justify-content: space-between; align-items: start; gap: 16px;">
-            <div style="flex: 1;">
-              <h3 style="font-size: 18px; font-weight: bold; margin-bottom: 8px; color: #1f2937;">
-                <%= link_to taller.nombre, taller_path(taller), style: "color: #2563eb; text-decoration: none;" %>
-              </h3>
-              <p style="color: #6b7280; margin-bottom: 12px; line-height: 1.5;"><%= taller.descripcion %></p>
-              <div style="display: flex; gap: 12px; font-size: 14px; color: #6b7280;">
-                <span>📅 <%= taller.fecha %></span>
-                <span>👥 <%= taller.cupos %> cupos</span>
-              </div>
+          <!-- HEADER DEL TALLER -->
+          <div style="margin-bottom: 12px;">
+            <h3 style="font-size: 18px; font-weight: bold; margin-bottom: 8px; color: #1f2937;">
+              <%= link_to taller.nombre, taller_path(taller), style: "color: #2563eb; text-decoration: none;" %>
+            </h3>
+            <p style="color: #6b7280; margin-bottom: 8px; line-height: 1.5;"><%= taller.descripcion %></p>
+            <div style="display: flex; gap: 12px; font-size: 14px; color: #6b7280;">
+              <span>📅 <%= taller.fecha %></span>
+              <span>👥 <%= taller.cupos %> cupos</span>
             </div>
-            
-            <!-- CALIFICACIONES DEL TALLER -->
-            <div style="background: white; border-radius: 6px; padding: 12px; min-width: 250px;">
-              <% calificaciones = @calificaciones_por_taller[taller.id] || [] %>
-              <% if calificaciones.any? %>
-                <p style="font-size: 12px; color: #6b7280; font-weight: 600; margin-bottom: 8px;">CALIFICACIONES (<%= calificaciones.count %>)</p>
-                <div style="display: grid; gap: 8px;">
+          </div>
+          
+          <!-- CALIFICACIONES HORIZONTALES -->
+          <% calificaciones = @calificaciones_por_taller[taller.id] || [] %>
+          <% if calificaciones.any? %>
+            <div style="background: #f3f4f6; border-radius: 6px; padding: 12px; margin-top: 12px;">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                <p style="font-size: 12px; color: #6b7280; font-weight: 600;">CALIFICACIONES (<%= calificaciones.count %>)</p>
+                <p style="font-size: 12px; color: #9ca3af; font-style: italic;">
+                  <% calificaciones_faltantes = (taller.numero_evaluaciones || 5) - calificaciones.count %>
+                  <% if calificaciones_faltantes > 0 %>
+                    Faltan <%= calificaciones_faltantes %> <%= calificaciones_faltantes == 1 ? 'calificación' : 'calificaciones' %>
+                  <% else %>
+                    ✓ Completo
+                  <% end %>
+                </p>
+              </div>
+              
+              <!-- GRID HORIZONTAL DE NOTAS + PROMEDIO EN MISMA LÍNEA -->
+              <div style="display: grid; grid-template-columns: 1fr auto; gap: 10px; align-items: end;">
+                <!-- NOTAS -->
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); gap: 10px;">
                   <% calificaciones.each do |cal| %>
-                    <div style="background: #f3f4f6; border-radius: 4px; padding: 8px; font-size: 13px;">
-                      <div style="display: flex; justify-content: space-between; align-items: center;">
-                        <span style="font-weight: 600;"><%= cal.nombre_evaluacion %></span>
-                        <span style="
-                          <% if cal.nota >= 5.5 %>
-                            color: #16a34a; font-weight: bold;
-                          <% elsif cal.nota >= 4.0 %>
-                            color: #f59e0b; font-weight: bold;
-                          <% else %>
-                            color: #dc2626; font-weight: bold;
-                          <% end %>
-                        "><%= number_with_precision(cal.nota, precision: 1) %>/7.0</span>
+                    <div style="background: white; border-radius: 4px; padding: 10px; border-left: 4px solid <%= if cal.nota >= 5.5 then '#16a34a' elsif cal.nota >= 4.0 then '#f59e0b' else '#dc2626' end %>;">
+                      <div style="font-size: 11px; color: #6b7280; font-weight: 600; margin-bottom: 4px; word-break: break-word;"><%= truncate(cal.nombre_evaluacion, length: 20) %></div>
+                      <div style="font-size: 18px; font-weight: bold; <%= if cal.nota >= 5.5 then 'color: #16a34a;' elsif cal.nota >= 4.0 then 'color: #f59e0b;' else 'color: #dc2626;' end %>">
+                        <%= number_with_precision(cal.nota, precision: 1) %>
                       </div>
-                      <div style="color: #6b7280; font-size: 12px; margin-top: 4px;"><%= cal.tema %></div>
-                      <% if cal.descripcion.present? %>
-                        <div style="color: #6b7280; font-size: 12px; margin-top: 2px; font-style: italic;">
-                          <%= truncate(cal.descripcion, length: 60) %>
-                        </div>
-                      <% end %>
+                      <div style="font-size: 10px; color: #9ca3af; margin-top: 4px;"><%= truncate(cal.tema, length: 15) %></div>
                     </div>
                   <% end %>
                 </div>
                 
                 <!-- PROMEDIO DEL TALLER -->
                 <% promedio = (calificaciones.sum(&:nota) / calificaciones.count).round(1) %>
-                <div style="background: #eff6ff; border-top: 1px solid #bfdbfe; margin-top: 12px; padding-top: 12px;">
-                  <p style="font-size: 12px; color: #0c4a6e; font-weight: 600;">Promedio: 
-                    <span style="
-                      <% if promedio >= 5.5 %>
-                        color: #16a34a;
-                      <% elsif promedio >= 4.0 %>
-                        color: #f59e0b;
-                      <% else %>
-                        color: #dc2626;
-                      <% end %>
-                      font-size: 16px; font-weight: bold;
-                    "><%= number_with_precision(promedio, precision: 1) %></span>
+                <div style="background: #eff6ff; border-radius: 4px; padding: 12px; min-width: 110px; text-align: center; border: 1px solid #bfdbfe;">
+                  <p style="font-size: 10px; color: #0c4a6e; font-weight: 600; margin-bottom: 4px;">PROMEDIO</p>
+                  <p style="font-size: 24px; font-weight: bold; <%= if promedio >= 5.5 then 'color: #16a34a;' elsif promedio >= 4.0 then 'color: #f59e0b;' else 'color: #dc2626;' end %>">
+                    <%= number_with_precision(promedio, precision: 1) %>
                   </p>
                 </div>
-              <% else %>
-                <p style="font-size: 12px; color: #9ca3af; font-style: italic;">Sin calificaciones</p>
+              </div>
+              
+              <!-- TEMAS EVALUADOS -->
+              <% temas = calificaciones.map(&:tema).uniq.compact %>
+              <% if temas.any? %>
+                <div style="margin-top: 12px; padding-top: 12px; border-top: 1px solid #e5e7eb;">
+                  <p style="font-size: 11px; color: #6b7280; font-weight: 600; margin-bottom: 8px;">📋 Temas Evaluados:</p>
+                  <div style="display: flex; flex-wrap: wrap; gap: 6px;">
+                    <% temas.each do |tema| %>
+                      <span style="background: white; border: 1px solid #d1d5db; border-radius: 4px; padding: 4px 8px; font-size: 12px; color: #4b5563;">
+                        <%= tema %>
+                      </span>
+                    <% end %>
+                  </div>
+                </div>
               <% end %>
             </div>
-          </div>
+          <% else %>
+            <div style="background: #f3f4f6; border-radius: 6px; padding: 12px; margin-top: 12px; color: #9ca3af; text-align: center; font-size: 13px; font-style: italic;">
+              Sin calificaciones
+            </div>
+          <% end %>
         </div>
       <% end %>
     </div>
@@ -137,7 +147,7 @@
             </div>
           </div>
           <% if user_signed_in? && current_user.admin? %>
-            <%= link_to "➕ Inscribir", new_taller_inscripcion_path(taller),
+            <%= link_to "➕ Inscribir", new_taller_inscripcione_path(taller),
                   style: "padding: 8px 16px; background: #10b981; color: white; border-radius: 6px; font-weight: 600; text-decoration: none; margin-left: 12px; display: inline-block;" %>
           <% end %>
         </div>
