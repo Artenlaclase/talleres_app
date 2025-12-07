@@ -1,91 +1,117 @@
 <% content_for :title, "Estudiantes" %>
 
-<h1 class="text-3xl font-bold mb-6">Listado de Estudiantes</h1>
-<!-- Cards (mobile) -->
-<div class="block md:hidden space-y-3 mb-4">
-  <% @estudiantes.each do |e| %>
-    <div class="bg-white border border-gray-200 rounded-lg shadow p-4 text-sm">
-      <h2 class="font-semibold text-gray-900 mb-1"><%= e.nombre %></h2>
-      <p class="text-gray-700"><span class="text-xs text-gray-500">Curso:</span> <span class="font-medium"><%= e.curso %></span></p>
-      <p class="text-gray-700 mb-3"><span class="text-xs text-gray-500">Taller:</span> <span class="font-medium"><%= e.taller&.nombre %></span></p>
-      <div class="flex flex-wrap gap-3">
-        <%= link_to "Ver", estudiante_path(e.id), class: "text-blue-600 hover:underline" %>
-        <% if user_signed_in? && current_user.admin? %>
-          <%= link_to "Editar", edit_estudiante_path(e.id), class: "text-yellow-600 hover:underline" %>
-          <%= link_to "Eliminar", estudiante_path(e.id), method: :delete,
-                data: { confirm: "¿Seguro?" }, class: "text-red-600 hover:underline" %>
-        <% end %>
+<h1 style="font-size: 28px; font-weight: bold; margin-bottom: 20px;">Listado de Estudiantes</h1>
+
+<!-- FILTROS -->
+<div style="background: #f9fafb; padding: 16px; border: 1px solid #e5e7eb; border-radius: 8px; margin-bottom: 20px;">
+  <%= form_with url: estudiantes_path, method: :get, local: true do %>
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; align-items: end;">
+      <div>
+        <label style="display: block; font-weight: 600; margin-bottom: 8px;">Curso/Grado</label>
+        <select name="curso" style="width: 100%; border: 1px solid #d1d5db; border-radius: 6px; padding: 8px 12px; font-size: 14px;">
+          <option value="">Todos</option>
+          <% @cursos.each do |c| %>
+            <option value="<%= c %>" <%= "selected" if params[:curso].to_s == c.to_s %>><%= c %></option>
+          <% end %>
+        </select>
+      </div>
+      <div>
+        <label style="display: block; font-weight: 600; margin-bottom: 8px;">Taller</label>
+        <select name="taller_id" style="width: 100%; border: 1px solid #d1d5db; border-radius: 6px; padding: 8px 12px; font-size: 14px;">
+          <option value="">Todos</option>
+          <% @talleres.each do |t| %>
+            <option value="<%= t.id %>" <%= "selected" if params[:taller_id].to_s == t.id.to_s %>><%= t.nombre %></option>
+          <% end %>
+        </select>
+      </div>
+      <div style="display: flex; gap: 8px;">
+        <button type="submit" style="padding: 8px 16px; background: #2563eb; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 500;">🔍 Filtrar</button>
+        <%= link_to "Limpiar", estudiantes_path, style: "padding: 8px 16px; background: #e5e7eb; color: #4b5563; border-radius: 6px; text-decoration: none; font-weight: 500; display: inline-block;" %>
       </div>
     </div>
   <% end %>
 </div>
 
-<div class="flex justify-between items-center mb-4">
-  <p class="text-green-600"><%= notice %></p>
+<!-- BOTONES DE ACCIÓN -->
+<div style="display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 20px;">
   <% if user_signed_in? %>
-    <%= link_to "Ingresar Estudiante", new_estudiante_path,
-        class: "px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700" %>
-    <%= link_to "Ingresar 10 Estudiantes", bulk_new_estudiantes_path,
-      class: "ml-2 px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700" %>
+    <%= link_to "👤 Ingresar Estudiante", new_estudiante_path,
+        style: "padding: 10px 16px; background: #2563eb; color: white; border-radius: 6px; text-decoration: none; font-weight: 500;" %>
+    <%= link_to "👥 Ingresar 10 Estudiantes", bulk_new_estudiantes_path,
+      style: "padding: 10px 16px; background: #6366f1; color: white; border-radius: 6px; text-decoration: none; font-weight: 500;" %>
   <% else %>
-    <%= link_to "Inicia sesión para ingresar estudiantes", new_user_session_path,
-        class: "px-4 py-2 rounded border border-gray-300 text-gray-700 hover:bg-gray-50" %>
+    <%= link_to "🔐 Inicia sesión para ingresar estudiantes", new_user_session_path,
+        style: "padding: 10px 16px; background: #e5e7eb; color: #4b5563; border-radius: 6px; text-decoration: none; font-weight: 500; border: 1px solid #d1d5db;" %>
   <% end %>
 </div>
 
-<div class="mb-6 p-4 bg-gray-50 border border-gray-200 rounded">
-  <%= form_with url: estudiantes_path, method: :get, local: true, class: "grid grid-cols-1 md:grid-cols-3 gap-4 items-end" do %>
-    <div>
-      <label class="block font-semibold mb-1">Curso/Grado</label>
-      <select name="curso" class="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
-        <option value="">Todos</option>
-        <% @cursos.each do |c| %>
-          <option value="<%= c %>" <%= "selected" if params[:curso].to_s == c.to_s %>><%= c %></option>
-        <% end %>
-      </select>
-    </div>
-    <div>
-      <label class="block font-semibold mb-1">Taller</label>
-      <select name="taller_id" class="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
-        <option value="">Todos</option>
-        <% @talleres.each do |t| %>
-          <option value="<%= t.id %>" <%= "selected" if params[:taller_id].to_s == t.id.to_s %>><%= t.nombre %></option>
-        <% end %>
-      </select>
-    </div>
-    <div class="flex gap-2">
-      <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">Filtrar</button>
-      <%= link_to "Limpiar", estudiantes_path, class: "px-4 py-2 rounded border border-gray-300 text-gray-700 hover:bg-gray-50" %>
-    </div>
-  <% end %>
-</div>
-
-<div class="overflow-x-auto hidden md:block">
-<table class="min-w-full bg-white border border-gray-200 rounded-lg overflow-hidden shadow text-sm md:text-base">
-  <thead class="bg-gray-100 border-b">
-    <tr>
-      <th class="px-4 py-2 text-left font-semibold">Nombre</th>
-      <th class="px-4 py-2 text-left font-semibold">Curso</th>
-      <th class="px-4 py-2 text-left font-semibold">Taller</th>
-      <th class="px-4 py-2 text-left font-semibold">Acciones</th>
-    </tr>
-  </thead>
-  <tbody>
-    <% @estudiantes.each do |e| %>
-      <tr class="border-b hover:bg-gray-50">
-        <td class="px-4 py-2"><%= e.nombre %></td>
-        <td class="px-4 py-2"><%= e.curso %></td>
-        <td class="px-4 py-2"><%= e.taller&.nombre %></td>
-        <td class="px-4 py-2 space-x-3">
-          <%= link_to "Ver", estudiante_path(e.id), class: "text-blue-600 hover:underline" %>
-          <% if user_signed_in? && current_user.admin? %>
-            <%= link_to "Editar", edit_estudiante_path(e.id), class: "text-yellow-600 hover:underline" %>
-            <%= link_to "Eliminar", estudiante_path(e.id), method: :delete,
-                  data: { confirm: "¿Seguro?" }, class: "text-red-600 hover:underline" %>
+<!-- DATOS -->
+<div style="background: white; padding: 20px; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+  <% if @estudiantes.any? %>
+    
+    <!-- VERSION DESKTOP (TABLA) -->
+    <div style="display: none; overflow-x: auto;" class="desktop-view">
+      <table style="width: 100%; border-collapse: collapse;">
+        <thead>
+          <tr style="background: #f3f4f6; border-bottom: 2px solid #d1d5db;">
+            <th style="padding: 12px; text-align: left; font-weight: 600;">Nombre</th>
+            <th style="padding: 12px; text-align: left; font-weight: 600;">Curso</th>
+            <th style="padding: 12px; text-align: left; font-weight: 600;">Taller</th>
+            <th style="padding: 12px; text-align: left; font-weight: 600;">Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @estudiantes.each do |e| %>
+            <tr style="border-bottom: 1px solid #e5e7eb;">
+              <td style="padding: 12px;"><strong><%= e.nombre %></strong></td>
+              <td style="padding: 12px;"><%= e.curso %></td>
+              <td style="padding: 12px;"><%= e.taller&.nombre %></td>
+              <td style="padding: 12px; white-space: nowrap;">
+                <%= link_to "👁️ Ver", estudiante_path(e.id), style: "margin-right: 10px; color: #2563eb; text-decoration: none;" %>
+                <% if user_signed_in? && current_user.admin? %>
+                  <%= link_to "✏️ Editar", edit_estudiante_path(e.id), style: "margin-right: 10px; color: #f59e0b; text-decoration: none;" %>
+                  <%= link_to "🗑️ Eliminar", estudiante_path(e.id), method: :delete,
+                        data: { confirm: "¿Seguro?" }, style: "color: #dc2626; text-decoration: none;" %>
+                <% end %>
+              </td>
+            </tr>
           <% end %>
-        </td>
-      </tr>
-    <% end %>
-  </tbody>
-  </table>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- VERSION MOBILE (CARDS) -->
+    <div style="display: block;">
+      <% @estudiantes.each do |e| %>
+        <div style="background: white; border: 1px solid #e5e7eb; border-radius: 8px; padding: 16px; margin-bottom: 16px; box-shadow: 0 1px 2px rgba(0,0,0,0.05);">
+          <div style="margin-bottom: 12px;">
+            <h2 style="font-size: 16px; font-weight: 600; color: #1f2937; margin: 0;"><%= e.nombre %></h2>
+          </div>
+          
+          <div style="background: #f9fafb; padding: 12px; border-radius: 6px; margin-bottom: 12px;">
+            <p style="margin: 6px 0; font-size: 14px;"><span style="color: #9ca3af; font-weight: 500;">Curso:</span> <span style="color: #1f2937; font-weight: 600;"><%= e.curso %></span></p>
+            <p style="margin: 6px 0; font-size: 14px;"><span style="color: #9ca3af; font-weight: 500;">Taller:</span> <span style="color: #1f2937; font-weight: 600;"><%= e.taller&.nombre %></span></p>
+          </div>
+          
+          <div style="display: flex; flex-wrap: wrap; gap: 8px;">
+            <%= link_to "👁️ Ver", estudiante_path(e.id), style: "padding: 8px 12px; background: #2563eb; color: white; border-radius: 4px; text-decoration: none; font-size: 14px; flex-grow: 1; text-align: center;" %>
+            <% if user_signed_in? && current_user.admin? %>
+              <%= link_to "✏️ Editar", edit_estudiante_path(e.id), style: "padding: 8px 12px; background: #f59e0b; color: white; border-radius: 4px; text-decoration: none; font-size: 14px; flex-grow: 1; text-align: center;" %>
+              <%= link_to "🗑️ Eliminar", estudiante_path(e.id), method: :delete,
+                    data: { confirm: "¿Seguro?" }, style: "padding: 8px 12px; background: #dc2626; color: white; border-radius: 4px; text-decoration: none; font-size: 14px; flex-grow: 1; text-align: center;" %>
+            <% end %>
+          </div>
+        </div>
+      <% end %>
+    </div>
+
+    <style>
+      @media (min-width: 768px) {
+        .desktop-view { display: block !important; }
+        div[style*="display: block"]:last-of-type { display: none !important; }
+      }
+    </style>
+  <% else %>
+    <p style="text-align: center; color: #6b7280; padding: 20px;">No hay estudiantes registrados. <%= link_to "Crear uno", new_estudiante_path, style: "color: #2563eb; text-decoration: underline;" %></p>
+  <% end %>
 </div>
