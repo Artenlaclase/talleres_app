@@ -1,6 +1,7 @@
 class EstudiantesController < ApplicationController
   before_action :authenticate_user!
-  before_action :require_admin!, only: %i[ new create edit update destroy ]
+  # Permite crear estudiantes a cualquier usuario autenticado; restringe edición/eliminación a admin
+  before_action :require_admin!, only: %i[ edit update destroy ]
   before_action :set_estudiante, only: %i[ show edit update destroy ]
 
   # GET /estudiantes or /estudiantes.json
@@ -62,11 +63,11 @@ class EstudiantesController < ApplicationController
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_estudiante
-      @estudiante = Estudiante.find(params.expect(:id))
+      @estudiante = Estudiante.find(params[:id])
     end
 
     # Only allow a list of trusted parameters through.
     def estudiante_params
-      params.expect(estudiante: [ :nombre, :curso, :taller_id ])
+      params.require(:estudiante).permit(:nombre, :curso, :taller_id)
     end
 end

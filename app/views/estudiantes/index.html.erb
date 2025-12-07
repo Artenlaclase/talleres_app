@@ -4,11 +4,14 @@
 
 <div class="flex justify-between items-center mb-4">
   <p class="text-green-600"><%= notice %></p>
-  <% if user_signed_in? && current_user.admin? %>
-    <%= link_to "Nuevo Estudiante", new_estudiante_path,
+  <% if user_signed_in? %>
+    <%= link_to "Ingresar Estudiante", new_estudiante_path,
         class: "px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700" %>
+  <% else %>
+    <%= link_to "Inicia sesión para ingresar estudiantes", new_user_session_path,
+        class: "px-4 py-2 rounded border border-gray-300 text-gray-700 hover:bg-gray-50" %>
   <% end %>
-  </div>
+</div>
 
 <table class="min-w-full bg-white border border-gray-200 rounded-lg overflow-hidden shadow">
   <thead class="bg-gray-100 border-b">
