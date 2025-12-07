@@ -74,7 +74,75 @@
   <div style="background: white; padding: 20px; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); margin-bottom: 20px;">
     <h2 style="font-size: 18px; font-weight: bold; margin-bottom: 16px;">📋 Detalle de Calificaciones</h2>
     
-    <% if params[:taller_id].present? %>
+    <% if params[:estudiante_id].present? %>
+      <!-- VISTA ESPECIAL: POR ESTUDIANTE EN TODOS LOS TALLERES -->
+      <% estudiante = Estudiante.find(params[:estudiante_id]) %>
+      <div style="background: #f0f9ff; border: 1px solid #bfdbfe; border-radius: 8px; padding: 16px; margin-bottom: 16px;">
+        <p style="margin: 0; color: #1e40af; font-weight: 600; font-size: 16px;">👤 Estudiante: <%= estudiante.nombre %></p>
+        <p style="margin: 8px 0 0 0; color: #1e40af; font-size: 14px;">
+          📚 Máximo de talleres por período: <strong><%= estudiante.max_talleres_por_periodo %></strong> | 
+          Talleres inscritos: <strong><%= Taller.joins(:estudiantes).where(estudiantes: { id: estudiante.id }).count %></strong>
+          <%= link_to "✏️ Editar", edit_estudiante_path(estudiante), style: "margin-left: 12px; color: #2563eb; text-decoration: none; font-weight: 500;" %>
+        </p>
+      </div>
+
+      <% 
+        # Obtener todos los talleres donde está inscrito
+        talleres_inscritos = Taller.joins(:estudiantes).where(estudiantes: { id: estudiante.id })
+      %>
+
+      <div style="overflow-x: auto;">
+        <table style="width: 100%; border-collapse: collapse; font-size: 14px;">
+          <thead>
+            <tr style="background: #f3f4f6; border-bottom: 2px solid #d1d5db;">
+              <th style="padding: 12px; text-align: left; font-weight: 600; min-width: 150px;">Taller</th>
+              <% 
+                # Obtener todas las evaluaciones únicas de este estudiante
+                evaluaciones = Calificacion.where(estudiante_id: estudiante.id).pluck(:nombre_evaluacion).uniq.sort
+              %>
+              <% evaluaciones.each do |eval_name| %>
+                <th style="padding: 12px; text-align: center; font-weight: 600; min-width: 120px;"><%= eval_name %></th>
+              <% end %>
+              <th style="padding: 12px; text-align: center; font-weight: 600; min-width: 100px;">Promedio</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% talleres_inscritos.each do |taller| %>
+              <% cals = calificaciones_filtradas.where(taller_id: taller.id) %>
+              <% promedio_taller_est = cals.any? ? (cals.sum(&:nota) / cals.count).round(1) : nil %>
+              <tr style="border-bottom: 1px solid #e5e7eb;">
+                <td style="padding: 12px; font-weight: 600;"><%= taller.nombre %></td>
+                <% evaluaciones.each do |eval_name| %>
+                  <% cal = cals.find_by(nombre_evaluacion: eval_name) %>
+                  <td style="padding: 12px; text-align: center;">
+                    <% if cal %>
+                      <div>
+                        <span style="<%= if cal.nota >= 5.5 then 'color: #16a34a; font-weight: 600;' elsif cal.nota >= 4.0 then 'color: #f59e0b; font-weight: 600;' else 'color: #dc2626; font-weight: 600;' end %>">
+                          <%= number_with_precision(cal.nota, precision: 1) %>
+                        </span>
+                      </div>
+                      <div style="font-size: 11px; color: #666; margin-top: 2px;">(<%= cal.tema %>)</div>
+                    <% else %>
+                      <span style="color: #d1d5db;">-</span>
+                    <% end %>
+                  </td>
+                <% end %>
+                <td style="padding: 12px; text-align: center; font-weight: 600;">
+                  <% if promedio_taller_est %>
+                    <span style="<%= if promedio_taller_est >= 5.5 then 'color: #16a34a;' elsif promedio_taller_est >= 4.0 then 'color: #f59e0b;' else 'color: #dc2626;' end %>">
+                      <%= number_with_precision(promedio_taller_est, precision: 1) %>
+                    </span>
+                  <% else %>
+                    <span style="color: #d1d5db;">-</span>
+                  <% end %>
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+
+    <% elsif params[:taller_id].present? %>
       <!-- VISTA ESPECIAL: POR TALLER CON ESTUDIANTES -->
       <% taller = Taller.find(params[:taller_id]) %>
       <h3 style="font-size: 16px; font-weight: 600; color: #2563eb; margin-bottom: 16px;">
@@ -131,6 +199,7 @@
           </tbody>
         </table>
       </div>
+
     <% else %>
       <!-- VISTA NORMAL: TABLA DETALLADA -->
       <div style="overflow-x: auto;">

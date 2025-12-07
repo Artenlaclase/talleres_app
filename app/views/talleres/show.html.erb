@@ -37,7 +37,7 @@
   <% end %>
   <% if user_signed_in? && current_user.admin? %>
     <div style="margin-top: 16px;">
-      <%= link_to "➕ Ingresar Estudiante", new_estudiante_path(estudiante: { taller_id: @taller.id }),
+      <%= link_to "➕ Inscribir Estudiante", "/talleres/#{@taller.id}/inscripciones/new",
           style: "padding: 10px 16px; background: #2563eb; color: white; border-radius: 6px; text-decoration: none; font-weight: 500; display: inline-block;" %>
     </div>
   <% end %>

@@ -62,10 +62,40 @@
         </thead>
         <tbody>
           <% @estudiantes.each do |e| %>
+            <% 
+              # Obtener talleres donde tiene calificaciones (talleres activos)
+              # Cargar calificaciones solo cuando sea necesario
+              talleres_con_calificaciones = Calificacion.where(estudiante_id: e.id).distinct.map(&:taller)
+              # Si no hay calificaciones, usar el taller_id principal
+              talleres_mostrar = talleres_con_calificaciones.any? ? talleres_con_calificaciones : (e.taller ? [e.taller] : [])
+              talleres_faltantes = e.max_talleres_por_periodo - talleres_mostrar.count
+            %>
             <tr style="border-bottom: 1px solid #e5e7eb;">
               <td style="padding: 12px;"><strong><%= e.nombre %></strong></td>
               <td style="padding: 12px;"><%= e.curso %></td>
-              <td style="padding: 12px;"><%= e.taller&.nombre %></td>
+              <td style="padding: 12px;">
+                <div style="display: flex; flex-wrap: wrap; gap: 8px; align-items: center;">
+                  <% if talleres_mostrar.any? %>
+                    <% talleres_mostrar.each do |taller| %>
+                      <span style="background: #dbeafe; color: #1e40af; padding: 4px 8px; border-radius: 4px; font-size: 13px; font-weight: 500;">
+                        <%= taller.nombre %>
+                      </span>
+                    <% end %>
+                  <% else %>
+                    <span style="color: #d1d5db;">Sin taller</span>
+                  <% end %>
+                  
+                  <% if talleres_faltantes > 0 %>
+                    <span style="background: #fef2f2; color: #991b1b; padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: 600; border: 1px solid #fecaca;">
+                      Faltan <%= talleres_faltantes %> <%= talleres_faltantes == 1 ? 'taller' : 'talleres' %>
+                    </span>
+                  <% elsif talleres_faltantes == 0 && talleres_mostrar.any? %>
+                    <span style="background: #f0fdf4; color: #166534; padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: 600; border: 1px solid #bbf7d0;">
+                      ✓ Completo
+                    </span>
+                  <% end %>
+                </div>
+              </td>
               <td style="padding: 12px; white-space: nowrap;">
                 <%= link_to "👁️ Ver", estudiante_path(e.id), style: "margin-right: 10px; color: #2563eb; text-decoration: none;" %>
                 <% if user_signed_in? && current_user.admin? %>
@@ -83,6 +113,14 @@
     <!-- VERSION MOBILE (CARDS) -->
     <div style="display: block;">
       <% @estudiantes.each do |e| %>
+        <% 
+          # Obtener talleres donde tiene calificaciones (talleres activos)
+          # Cargar calificaciones solo cuando sea necesario
+          talleres_con_calificaciones = Calificacion.where(estudiante_id: e.id).distinct.map(&:taller)
+          # Si no hay calificaciones, usar el taller_id principal
+          talleres_mostrar = talleres_con_calificaciones.any? ? talleres_con_calificaciones : (e.taller ? [e.taller] : [])
+          talleres_faltantes = e.max_talleres_por_periodo - talleres_mostrar.count
+        %>
         <div style="background: white; border: 1px solid #e5e7eb; border-radius: 8px; padding: 16px; margin-bottom: 16px; box-shadow: 0 1px 2px rgba(0,0,0,0.05);">
           <div style="margin-bottom: 12px;">
             <h2 style="font-size: 16px; font-weight: 600; color: #1f2937; margin: 0;"><%= e.nombre %></h2>
@@ -90,7 +128,28 @@
           
           <div style="background: #f9fafb; padding: 12px; border-radius: 6px; margin-bottom: 12px;">
             <p style="margin: 6px 0; font-size: 14px;"><span style="color: #9ca3af; font-weight: 500;">Curso:</span> <span style="color: #1f2937; font-weight: 600;"><%= e.curso %></span></p>
-            <p style="margin: 6px 0; font-size: 14px;"><span style="color: #9ca3af; font-weight: 500;">Taller:</span> <span style="color: #1f2937; font-weight: 600;"><%= e.taller&.nombre %></span></p>
+            <p style="margin: 6px 0; font-size: 14px;"><span style="color: #9ca3af; font-weight: 500;">Talleres:</span></p>
+            <div style="display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px;">
+              <% if talleres_mostrar.any? %>
+                <% talleres_mostrar.each do |taller| %>
+                  <span style="background: #dbeafe; color: #1e40af; padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: 500;">
+                    <%= taller.nombre %>
+                  </span>
+                <% end %>
+              <% else %>
+                <span style="color: #d1d5db; font-size: 13px;">Sin taller</span>
+              <% end %>
+              
+              <% if talleres_faltantes > 0 %>
+                <span style="background: #fef2f2; color: #991b1b; padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: 600; border: 1px solid #fecaca;">
+                  Faltan <%= talleres_faltantes %>
+                </span>
+              <% elsif talleres_faltantes == 0 && talleres_mostrar.any? %>
+                <span style="background: #f0fdf4; color: #166534; padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: 600; border: 1px solid #bbf7d0;">
+                  ✓ Completo
+                </span>
+              <% end %>
+            </div>
           </div>
           
           <div style="display: flex; flex-wrap: wrap; gap: 8px;">

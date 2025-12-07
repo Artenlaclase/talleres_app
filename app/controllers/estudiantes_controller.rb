@@ -8,13 +8,25 @@ class EstudiantesController < ApplicationController
   def index
     @talleres = Taller.all
     @cursos = Estudiante.distinct.pluck(:curso).compact
+    
+    # Obtener estudiantes sin cargar asociaciones que causen duplicados
     @estudiantes = Estudiante.all
+    
     if params[:curso].present?
       @estudiantes = @estudiantes.where(curso: params[:curso])
     end
+    
     if params[:taller_id].present?
-      @estudiantes = @estudiantes.where(taller_id: params[:taller_id])
+      # Filtrar por estudiantes que tengan calificaciones en ese taller
+      # Usar subquery para evitar JOINs que generen duplicados
+      taller_id = params[:taller_id]
+      @estudiantes = @estudiantes.where(id: Calificacion.where(taller_id: taller_id).distinct.pluck(:estudiante_id))
     end
+    
+    @estudiantes = @estudiantes.order(:nombre)
+    
+    # Solo pre-cargar taller (no cargar calificaciones aquí)
+    @estudiantes = @estudiantes.includes(:taller)
   end
 
   # GET /estudiantes/1 or /estudiantes/1.json
