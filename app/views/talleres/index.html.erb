@@ -1,82 +1,48 @@
 <h1 class="text-3xl font-bold mb-6">Listado de Talleres</h1>
 
-<!-- Cards (mobile) -->
-<div class="block md:hidden space-y-3">
-  <% @talleres.each do |t| %>
-    <div class="bg-white border border-gray-200 rounded-lg shadow p-4 text-sm">
-      <div class="flex items-center justify-between mb-2">
-        <h2 class="font-semibold text-gray-900"><%= t.nombre %></h2>
-        <span class="text-xs text-gray-500"><%= t.fecha %></span>
-      </div>
-      <div class="grid grid-cols-3 gap-2 text-gray-700 mb-3">
-        <div>
-          <p class="text-xs text-gray-500">Cupos totales</p>
-          <p class="font-medium"><%= t.cupos %></p>
-        </div>
-        <div>
-          <p class="text-xs text-gray-500">Inscritos</p>
-          <p class="font-medium"><%= t.estudiantes.count %></p>
-        </div>
-        <div>
-          <p class="text-xs text-gray-500">Disponibles</p>
-          <p class="font-medium"><%= t.cupos_restantes %></p>
-        </div>
-      </div>
-      <div class="flex flex-wrap gap-3">
-        <%= link_to "Ver", taller_path(t.id), class: "text-blue-600 hover:underline" %>
-        <% if user_signed_in? && current_user.admin? %>
-          <%= link_to "Editar", edit_taller_path(t.id), class: "text-yellow-600 hover:underline" %>
-          <%= link_to "Eliminar", taller_path(t.id), method: :delete, data: { confirm: "¿Seguro?" }, class: "text-red-600 hover:underline" %>
+<div style="background: white; padding: 20px; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+  <% if @talleres.any? %>
+    <table style="width: 100%; border-collapse: collapse;">
+      <thead>
+        <tr style="background: #f3f4f6; border-bottom: 2px solid #d1d5db;">
+          <th style="padding: 12px; text-align: left; font-weight: 600;">Nombre</th>
+          <th style="padding: 12px; text-align: left; font-weight: 600;">Descripción</th>
+          <th style="padding: 12px; text-align: left; font-weight: 600;">Cupos</th>
+          <th style="padding: 12px; text-align: left; font-weight: 600;">Inscritos</th>
+          <th style="padding: 12px; text-align: left; font-weight: 600;">Disponibles</th>
+          <th style="padding: 12px; text-align: left; font-weight: 600;">Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @talleres.each do |t| %>
+          <tr style="border-bottom: 1px solid #e5e7eb; hover-background: #f9fafb;">
+            <td style="padding: 12px;"><strong><%= t.nombre %></strong></td>
+            <td style="padding: 12px;"><%= t.descripcion %></td>
+            <td style="padding: 12px;"><%= t.cupos %></td>
+            <td style="padding: 12px;"><%= t.estudiantes.count %></td>
+            <td style="padding: 12px;"><span style="background: #dbeafe; color: #1e40af; padding: 4px 8px; border-radius: 4px; font-weight: 600;"><%= t.cupos_restantes %></span></td>
+            <td style="padding: 12px;">
+              <%= link_to "👁️ Ver", taller_path(t.id), style: "margin-right: 10px; color: #2563eb; text-decoration: none;" %>
+              <% if user_signed_in? && current_user.admin? %>
+                <%= link_to "✏️ Editar", edit_taller_path(t.id), style: "margin-right: 10px; color: #f59e0b; text-decoration: none;" %>
+                <%= link_to "🗑️ Eliminar", taller_path(t.id), method: :delete, data: { confirm: "¿Seguro?" }, style: "color: #dc2626; text-decoration: none;" %>
+              <% end %>
+            </td>
+          </tr>
         <% end %>
-      </div>
-    </div>
+      </tbody>
+    </table>
+  <% else %>
+    <p style="text-align: center; color: #6b7280; padding: 20px;">No hay talleres disponibles</p>
   <% end %>
 </div>
 
-<div class="overflow-x-auto hidden md:block">
-<table class="min-w-full bg-white border border-gray-200 rounded-lg overflow-hidden shadow text-sm md:text-base">
-  <thead class="bg-gray-100 border-b">
-    <tr>
-      <th class="px-4 py-2 text-left font-semibold">Nombre</th>
-      <th class="px-4 py-2 text-left font-semibold">Fecha</th>
-      <th class="px-4 py-2 text-left font-semibold">Cupos totales</th>
-      <th class="px-4 py-2 text-left font-semibold">Inscritos</th>
-      <th class="px-4 py-2 text-left font-semibold">Disponibles</th>
-      <th class="px-4 py-2 text-left font-semibold">Acciones</th>
-    </tr>
-  </thead>
-
-  <tbody>
-    <% @talleres.each do |t| %>
-      <tr class="border-b hover:bg-gray-50">
-        <td class="px-4 py-2"><%= t.nombre %></td>
-        <td class="px-4 py-2"><%= t.fecha %></td>
-        <td class="px-4 py-2"><%= t.cupos %></td>
-        <td class="px-4 py-2"><%= t.estudiantes.count %></td>
-        <td class="px-4 py-2"><%= t.cupos_restantes %></td>
-
-          <td class="px-4 py-2 space-x-3">
-            <%= link_to "Ver", taller_path(t.id),
-              class: "text-blue-600 hover:underline" %>
-            <%= link_to "Editar", edit_taller_path(t.id),
-              class: "text-yellow-600 hover:underline" %>
-            <%= link_to "Eliminar", taller_path(t.id),
-              method: :delete,
-              data: { confirm: "¿Seguro?" },
-              class: "text-red-600 hover:underline" %>
-          </td>
-      </tr>
-    <% end %>
-  </tbody>
-</table>
-</div>
-
-<div class="mt-6">
-  <% if user_signed_in? %>
-    <%= link_to "Crear nuevo taller", new_taller_path,
-        class: "px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700" %>
+<div style="margin-top: 20px;">
+  <% if user_signed_in? && current_user.admin? %>
+    <%= link_to "➕ Crear nuevo taller", new_taller_path,
+        style: "display: inline-block; padding: 10px 16px; background: #2563eb; color: white; border-radius: 6px; text-decoration: none; font-weight: 500;" %>
   <% else %>
-    <%= link_to "Inicia sesión para crear talleres", new_user_session_path,
-        class: "px-4 py-2 rounded border border-gray-300 text-gray-700 hover:bg-gray-50" %>
+    <%= link_to "🔐 Inicia sesión para crear talleres", new_user_session_path,
+        style: "display: inline-block; padding: 10px 16px; background: #e5e7eb; color: #4b5563; border-radius: 6px; text-decoration: none; font-weight: 500; border: 1px solid #d1d5db;" %>
   <% end %>
 </div>
