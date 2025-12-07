@@ -75,3 +75,37 @@ TalleresApp es una aplicación educativa para gestionar talleres y estudiantes. 
 	- `config/initializers/assets.rb` incluye `app/assets/builds`
 	- Corre `bin\dev` para ver Rails y CSS en watch.
 
+## Guía con Capturas
+Coloca las imágenes en `docs/images/` y referencia con Markdown.
+
+- Inicio y servidor:
+	- `![Servidor en ejecución](docs/images/server-running.png)`
+	- `![Home en escritorio](docs/images/home-desktop.png)`
+- Navbar responsive:
+	- `![Navbar en móvil](docs/images/navbar-mobile.png)`
+- CRUD Talleres:
+	- `![Listado de talleres](docs/images/talleres-index.png)`
+	- `![Formulario Nuevo Taller](docs/images/talleres-form-new.png)`
+	- `![Detalle de taller](docs/images/taller-show.png)`
+- Estudiantes:
+	- `![Formulario Estudiante con selector de Taller](docs/images/estudiantes-form.png)`
+- Autenticación (Devise):
+	- `![Login](docs/images/devise-login.png)`
+	- `![Registro](docs/images/devise-register.png)`
+	- `![Reset Password](docs/images/devise-reset.png)`
+- Footer:
+	- `![Footer fijo al final](docs/images/footer-sticky.png)`
+- API:
+	- `![API talleres JSON](docs/images/api-talleres-json.png)`
+
+### Checklist de Capturas
+- [ ] Servidor corriendo y home
+- [ ] Navbar en móvil (hamburguesa y menú)
+- [ ] Listado de talleres
+- [ ] Formulario nuevo taller
+- [ ] Detalle de taller
+- [ ] Formulario estudiante
+- [ ] Pantallas de Devise (login/registro/reset)
+- [ ] Footer sticky
+- [ ] Respuesta JSON de API
+
