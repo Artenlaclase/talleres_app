@@ -8,9 +8,12 @@ class Taller < ApplicationRecord
   has_many :estudiantes, dependent: :restrict_with_error
   has_many :calificaciones, dependent: :destroy, class_name: "Calificacion"
   has_many :estudiantes_calificados, through: :calificaciones, source: :estudiante
+  has_many :inscripciones, dependent: :destroy, class_name: "Inscripcion"
+  has_many :estudiantes_inscritos, through: :inscripciones, source: :estudiante
 
   def cupos_restantes
-    [cupos - estudiantes.count, 0].max
+    inscritos = estudiantes.count + inscripciones.count
+    [cupos - inscritos, 0].max
   end
 
   validate :cupos_no_menor_a_inscritos

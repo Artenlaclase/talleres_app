@@ -63,11 +63,19 @@
         <tbody>
           <% @estudiantes.each do |e| %>
             <% 
-              # Obtener talleres donde tiene calificaciones (talleres activos)
-              # Cargar calificaciones solo cuando sea necesario
-              talleres_con_calificaciones = Calificacion.where(estudiante_id: e.id).distinct.map(&:taller)
-              # Si no hay calificaciones, usar el taller_id principal
-              talleres_mostrar = talleres_con_calificaciones.any? ? talleres_con_calificaciones : (e.taller ? [e.taller] : [])
+              # Obtener talleres del estudiante de todas las fuentes
+              # 1. Su taller_id principal
+              talleres_set = Set.new
+              talleres_set.add(e.taller.id) if e.taller.present?
+              
+              # 2. Talleres donde tiene calificaciones
+              Calificacion.where(estudiante_id: e.id).distinct.pluck(:taller_id).each { |t_id| talleres_set.add(t_id) }
+              
+              # 3. Talleres donde está inscrito
+              Inscripcion.where(estudiante_id: e.id).distinct.pluck(:taller_id).each { |t_id| talleres_set.add(t_id) }
+              
+              # Obtener los objetos de Taller
+              talleres_mostrar = Taller.where(id: talleres_set.to_a)
               talleres_faltantes = e.max_talleres_por_periodo - talleres_mostrar.count
             %>
             <tr style="border-bottom: 1px solid #e5e7eb;">
@@ -114,11 +122,19 @@
     <div style="display: block;">
       <% @estudiantes.each do |e| %>
         <% 
-          # Obtener talleres donde tiene calificaciones (talleres activos)
-          # Cargar calificaciones solo cuando sea necesario
-          talleres_con_calificaciones = Calificacion.where(estudiante_id: e.id).distinct.map(&:taller)
-          # Si no hay calificaciones, usar el taller_id principal
-          talleres_mostrar = talleres_con_calificaciones.any? ? talleres_con_calificaciones : (e.taller ? [e.taller] : [])
+          # Obtener talleres del estudiante de todas las fuentes
+          # 1. Su taller_id principal
+          talleres_set = Set.new
+          talleres_set.add(e.taller.id) if e.taller.present?
+          
+          # 2. Talleres donde tiene calificaciones
+          Calificacion.where(estudiante_id: e.id).distinct.pluck(:taller_id).each { |t_id| talleres_set.add(t_id) }
+          
+          # 3. Talleres donde está inscrito
+          Inscripcion.where(estudiante_id: e.id).distinct.pluck(:taller_id).each { |t_id| talleres_set.add(t_id) }
+          
+          # Obtener los objetos de Taller
+          talleres_mostrar = Taller.where(id: talleres_set.to_a)
           talleres_faltantes = e.max_talleres_por_periodo - talleres_mostrar.count
         %>
         <div style="background: white; border: 1px solid #e5e7eb; border-radius: 8px; padding: 16px; margin-bottom: 16px; box-shadow: 0 1px 2px rgba(0,0,0,0.05);">
