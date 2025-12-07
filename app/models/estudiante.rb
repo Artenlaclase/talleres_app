@@ -1,5 +1,7 @@
 class Estudiante < ApplicationRecord
   belongs_to :taller
+  has_many :calificaciones, dependent: :destroy
+  has_many :talleres_calificados, through: :calificaciones, source: :taller
 
   validates :nombre, presence: true
   validates :curso, presence: true

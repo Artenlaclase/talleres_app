@@ -40,6 +40,7 @@
           <%= link_to "Talleres", talleres_path, class: "hover:text-blue-600" %>
           <%= link_to "Estudiantes", estudiantes_path, class: "hover:text-blue-600" %>
           <% if user_signed_in? && current_user.admin? %>
+            <%= link_to "Calificaciones", calificaciones_path, class: "hover:text-blue-600" %>
             <%= link_to "Nuevo Taller", new_taller_path, class: "hover:text-blue-600" %>
             <%= link_to "Nuevo Estudiante", new_estudiante_path, class: "hover:text-blue-600" %>
           <% end %>
@@ -59,6 +60,7 @@
           <%= link_to "Talleres", talleres_path, class: "hover:text-blue-600" %>
           <%= link_to "Estudiantes", estudiantes_path, class: "hover:text-blue-600" %>
           <% if user_signed_in? && current_user.admin? %>
+            <%= link_to "Calificaciones", calificaciones_path, class: "hover:text-blue-600" %>
             <%= link_to "Nuevo Taller", new_taller_path, class: "hover:text-blue-600" %>
             <%= link_to "Nuevo Estudiante", new_estudiante_path, class: "hover:text-blue-600" %>
           <% end %>

@@ -15,6 +15,7 @@ Rails.application.routes.draw do
     end
   end
   resources :talleres
+  resources :calificaciones
   get "pages/home"
 
   root "pages#home"
