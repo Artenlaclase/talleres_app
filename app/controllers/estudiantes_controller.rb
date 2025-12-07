@@ -6,7 +6,14 @@ class EstudiantesController < ApplicationController
 
   # GET /estudiantes or /estudiantes.json
   def index
+    @talleres = Taller.all
     @estudiantes = Estudiante.all
+    if params[:curso].present?
+      @estudiantes = @estudiantes.where(curso: params[:curso])
+    end
+    if params[:taller_id].present?
+      @estudiantes = @estudiantes.where(taller_id: params[:taller_id])
+    end
   end
 
   # GET /estudiantes/1 or /estudiantes/1.json

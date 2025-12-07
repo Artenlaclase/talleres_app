@@ -15,6 +15,28 @@
   <% end %>
 </div>
 
+<div class="mb-6 p-4 bg-gray-50 border border-gray-200 rounded">
+  <%= form_with url: estudiantes_path, method: :get, local: true, class: "grid grid-cols-1 md:grid-cols-3 gap-4 items-end" do %>
+    <div>
+      <label class="block font-semibold mb-1">Curso/Grado</label>
+      <input type="text" name="curso" value="<%= params[:curso] %>" placeholder="Ej. 2°A" class="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" />
+    </div>
+    <div>
+      <label class="block font-semibold mb-1">Taller</label>
+      <select name="taller_id" class="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
+        <option value="">Todos</option>
+        <% @talleres.each do |t| %>
+          <option value="<%= t.id %>" <%= "selected" if params[:taller_id].to_s == t.id.to_s %>><%= t.nombre %></option>
+        <% end %>
+      </select>
+    </div>
+    <div class="flex gap-2">
+      <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">Filtrar</button>
+      <%= link_to "Limpiar", estudiantes_path, class: "px-4 py-2 rounded border border-gray-300 text-gray-700 hover:bg-gray-50" %>
+    </div>
+  <% end %>
+</div>
+
 <table class="min-w-full bg-white border border-gray-200 rounded-lg overflow-hidden shadow">
   <thead class="bg-gray-100 border-b">
     <tr>
