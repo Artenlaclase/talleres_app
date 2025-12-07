@@ -62,6 +62,16 @@
     <% end %>
   </div>
 
+  <div>
+    <%= form.label :numero_evaluaciones, "Número de evaluaciones permitidas", class: "block font-semibold mb-1" %>
+    <%= form.number_field :numero_evaluaciones,
+        min: 1,
+        step: 1,
+        value: @taller.numero_evaluaciones || 5,
+        class: "w-full border border-gray-300 rounded px-3 py-2 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500" %>
+    <p class="text-xs text-gray-500 mt-1">Cantidad máxima de calificaciones por estudiante. Por defecto: 5</p>
+  </div>
+
   <div class="flex items-center gap-2">
     <%= form.submit (@taller.new_record? ? "Crear Taller" : "Actualizar Taller"), class: "px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700" %>
     <%= link_to "Cancelar", talleres_path, class: "px-4 py-2 rounded border border-gray-300 text-gray-700 hover:bg-gray-50" %>

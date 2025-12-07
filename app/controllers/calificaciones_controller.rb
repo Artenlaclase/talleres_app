@@ -77,6 +77,6 @@ class CalificacionesController < ApplicationController
   end
 
   def calificacion_params
-    params.require(:calificacion).permit(:estudiante_id, :nota, :descripcion)
+    params.require(:calificacion).permit(:estudiante_id, :nota, :descripcion, :nombre_evaluacion)
   end
 end

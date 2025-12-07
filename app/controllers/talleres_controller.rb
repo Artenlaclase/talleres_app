@@ -59,6 +59,6 @@ class TalleresController < ApplicationController
   end
 
   def taller_params
-    params.require(:taller).permit(:nombre, :descripcion, :fecha, :cupos)
+    params.require(:taller).permit(:nombre, :descripcion, :fecha, :cupos, :numero_evaluaciones)
   end
 end

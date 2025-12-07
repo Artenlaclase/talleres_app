@@ -46,41 +46,63 @@
 <!-- CALIFICACIONES -->
 <div style="background: white; padding: 20px; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); margin-bottom: 24px;">
   <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
-    <h2 style="font-size: 20px; font-weight: bold; margin: 0;">📊 Calificaciones</h2>
+    <h2 style="font-size: 20px; font-weight: bold; margin: 0;">📊 Calificaciones (Max: <%= @taller.numero_evaluaciones %>)</h2>
     <% if user_signed_in? && current_user.admin? %>
       <%= link_to "➕ Nueva", new_taller_calificacione_path(@taller),
           style: "padding: 8px 12px; background: #2563eb; color: white; border-radius: 6px; text-decoration: none; font-weight: 500;" %>
     <% end %>
   </div>
 
-  <% if @calificaciones.any? %>
+  <% if @taller.estudiantes.any? %>
     <div style="overflow-x: auto;">
       <table style="width: 100%; border-collapse: collapse;">
         <thead>
           <tr style="background: #f3f4f6; border-bottom: 2px solid #d1d5db;">
-            <th style="padding: 12px; text-align: left; font-weight: 600;">Estudiante</th>
-            <th style="padding: 12px; text-align: left; font-weight: 600;">Nota</th>
-            <th style="padding: 12px; text-align: left; font-weight: 600;">Comentario</th>
+            <th style="padding: 12px; text-align: left; font-weight: 600; min-width: 150px;">Estudiante</th>
+            <% @taller.numero_evaluaciones.times do |i| %>
+              <th style="padding: 12px; text-align: center; font-weight: 600; min-width: 100px;">Eval <%= i + 1 %></th>
+            <% end %>
+            <th style="padding: 12px; text-align: center; font-weight: 600; min-width: 100px;">Promedio</th>
             <% if user_signed_in? && current_user.admin? %>
-              <th style="padding: 12px; text-align: left; font-weight: 600;">Acciones</th>
+              <th style="padding: 12px; text-align: center; font-weight: 600; min-width: 100px;">Acciones</th>
             <% end %>
           </tr>
         </thead>
         <tbody>
-          <% @calificaciones.each do |c| %>
+          <% @taller.estudiantes.each do |estudiante| %>
+            <% calificaciones = @calificaciones.where(estudiante_id: estudiante.id).sort_by { |c| c.created_at } %>
+            <% promedio = calificaciones.any? ? (calificaciones.sum(&:nota) / calificaciones.count).round(1) : nil %>
             <tr style="border-bottom: 1px solid #e5e7eb;">
-              <td style="padding: 12px;"><strong><%= c.estudiante.nombre %></strong></td>
-              <td style="padding: 12px;">
-                <span style="<%= if c.nota >= 5.5 then 'color: #16a34a; font-weight: 600;' elsif c.nota >= 4.0 then 'color: #f59e0b; font-weight: 600;' else 'color: #dc2626; font-weight: 600;' end %>">
-                  <%= number_with_precision(c.nota, precision: 1) %>/7.0
-                </span>
+              <td style="padding: 12px; font-weight: 500;"><%= estudiante.nombre %></td>
+              <% @taller.numero_evaluaciones.times do |i| %>
+                <% cal = calificaciones[i] %>
+                <td style="padding: 12px; text-align: center;">
+                  <% if cal %>
+                    <span style="<%= if cal.nota >= 5.5 then 'color: #16a34a; font-weight: 600;' elsif cal.nota >= 4.0 then 'color: #f59e0b; font-weight: 600;' else 'color: #dc2626; font-weight: 600;' end %>">
+                      <%= number_with_precision(cal.nota, precision: 1) %>
+                    </span>
+                    <div style="font-size: 11px; color: #666; margin-top: 2px;">(<%= cal.nombre_evaluacion %>)</div>
+                  <% else %>
+                    <span style="color: #d1d5db;">-</span>
+                  <% end %>
+                </td>
+              <% end %>
+              <td style="padding: 12px; text-align: center; font-weight: 600;">
+                <% if promedio %>
+                  <span style="<%= if promedio >= 5.5 then 'color: #16a34a;' elsif promedio >= 4.0 then 'color: #f59e0b;' else 'color: #dc2626;' end %>">
+                    <%= number_with_precision(promedio, precision: 1) %>
+                  </span>
+                <% else %>
+                  <span style="color: #d1d5db;">-</span>
+                <% end %>
               </td>
-              <td style="padding: 12px; max-width: 200px; word-break: break-word;"><%= truncate(c.descripcion, length: 40) %></td>
               <% if user_signed_in? && current_user.admin? %>
-                <td style="padding: 12px; white-space: nowrap;">
-                  <%= link_to "✏️ Editar", edit_taller_calificacione_path(@taller, c), style: "margin-right: 8px; color: #f59e0b; text-decoration: none;" %>
-                  <%= link_to "🗑️ Eliminar", taller_calificacione_path(@taller, c), method: :delete,
-                        data: { confirm: "¿Seguro?" }, style: "color: #dc2626; text-decoration: none;" %>
+                <td style="padding: 12px; text-align: center;">
+                  <% if calificaciones.any? %>
+                    <%= link_to "✏️", edit_taller_calificacione_path(@taller, calificaciones.first), style: "margin-right: 8px; color: #f59e0b; text-decoration: none;" %>
+                    <%= link_to "🗑️", taller_calificacione_path(@taller, calificaciones.first), method: :delete,
+                          data: { confirm: "¿Eliminar esta calificación?" }, style: "color: #dc2626; text-decoration: none;" %>
+                  <% end %>
                 </td>
               <% end %>
             </tr>
@@ -89,7 +111,7 @@
       </table>
     </div>
   <% else %>
-    <p style="color: #9ca3af;">No hay calificaciones registradas aún.</p>
+    <p style="color: #9ca3af;">No hay estudiantes inscritos aún.</p>
   <% end %>
 </div>
 
