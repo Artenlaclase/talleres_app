@@ -11,6 +11,7 @@ class TalleresController < ApplicationController
 
   # GET /talleres/:id
   def show
+    @calificaciones = @taller.calificaciones.includes(:estudiante)
   end
 
   # GET /talleres/new

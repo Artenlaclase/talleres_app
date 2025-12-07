@@ -11,6 +11,16 @@ class CalificacionesController < ApplicationController
     
     @estudiantes = Estudiante.all.order(:nombre)
     @talleres = Taller.all.order(:nombre)
+    
+    # Calcular promedio por taller
+    @promedios_por_taller = {}
+    @talleres.each do |taller|
+      calificaciones_taller = Calificacion.where(taller_id: taller.id)
+      if calificaciones_taller.any?
+        promedio = calificaciones_taller.average(:nota).round(1)
+        @promedios_por_taller[taller.id] = promedio
+      end
+    end
   end
 
   def show

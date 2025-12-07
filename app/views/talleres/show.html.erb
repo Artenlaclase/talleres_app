@@ -1,41 +1,106 @@
-<p class="text-green-600"><%= notice %></p>
+<p style="color: #16a34a; font-weight: 500;"><%= notice %></p>
 
-<h1 class="text-3xl font-bold mb-4"><%= @taller.nombre %></h1>
+<h1 style="font-size: 28px; font-weight: bold; margin-bottom: 24px;"><%= @taller.nombre %></h1>
 
-<div class="space-y-4">
-  <p><strong>Descripción:</strong> <%= @taller.descripcion %></p>
-  <p><strong>Fecha:</strong> <%= @taller.fecha %></p>
-  <p><strong>Cupos totales:</strong> <%= @taller.cupos %></p>
-  <p><strong>Cupos disponibles:</strong> <%= @taller.cupos_restantes %></p>
+<!-- INFORMACIÓN DEL TALLER -->
+<div style="background: white; padding: 20px; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); margin-bottom: 24px;">
+  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px;">
+    <div>
+      <p style="margin: 0; color: #9ca3af; font-size: 14px; font-weight: 500; margin-bottom: 8px;">Descripción</p>
+      <p style="margin: 0; color: #1f2937;"><%= @taller.descripcion %></p>
+    </div>
+    <div>
+      <p style="margin: 0; color: #9ca3af; font-size: 14px; font-weight: 500; margin-bottom: 8px;">Fecha</p>
+      <p style="margin: 0; color: #1f2937;"><%= l(@taller.fecha, format: :long) %></p>
+    </div>
+    <div>
+      <p style="margin: 0; color: #9ca3af; font-size: 14px; font-weight: 500; margin-bottom: 8px;">Cupos</p>
+      <p style="margin: 0; color: #1f2937;"><%= @taller.cupos_restantes %> disponibles de <%= @taller.cupos %></p>
+    </div>
+  </div>
 </div>
 
-<div class="mt-8">
-  <h2 class="text-2xl font-semibold mb-3">Estudiantes inscritos</h2>
+<!-- ESTUDIANTES INSCRITOS -->
+<div style="background: white; padding: 20px; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); margin-bottom: 24px;">
+  <h2 style="font-size: 20px; font-weight: bold; margin-bottom: 16px;">👥 Estudiantes inscritos (<%= @taller.estudiantes.count %>)</h2>
   <% if @taller.estudiantes.any? %>
-    <ul class="list-disc ml-6 space-y-1">
+    <div style="space-y: 8px;">
       <% @taller.estudiantes.each do |e| %>
-        <li><%= e.nombre %> — <span class="text-gray-600"><%= e.curso %></span></li>
+        <div style="padding: 12px; border-bottom: 1px solid #e5e7eb;">
+          <p style="margin: 0; color: #1f2937; font-weight: 500;"><%= e.nombre %></p>
+          <p style="margin: 4px 0 0 0; color: #9ca3af; font-size: 14px;"><%= e.curso %></p>
+        </div>
       <% end %>
-    </ul>
+    </div>
   <% else %>
-    <p class="text-gray-600">No hay estudiantes inscritos aún.</p>
+    <p style="color: #9ca3af;">No hay estudiantes inscritos aún.</p>
   <% end %>
-  <% if user_signed_in? %>
-    <div class="mt-4">
-      <%= link_to "Ingresar Estudiante a este taller", new_estudiante_path(estudiante: { taller_id: @taller.id }),
-          class: "px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700" %>
+  <% if user_signed_in? && current_user.admin? %>
+    <div style="margin-top: 16px;">
+      <%= link_to "➕ Ingresar Estudiante", new_estudiante_path(estudiante: { taller_id: @taller.id }),
+          style: "padding: 10px 16px; background: #2563eb; color: white; border-radius: 6px; text-decoration: none; font-weight: 500; display: inline-block;" %>
     </div>
   <% end %>
 </div>
 
-<div class="mt-8 space-x-4">
-  <%= link_to "Editar", edit_taller_path(@taller),
-        class: "px-4 py-2 bg-yellow-500 text-white rounded hover:bg-yellow-600" %>
+<!-- CALIFICACIONES -->
+<div style="background: white; padding: 20px; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); margin-bottom: 24px;">
+  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+    <h2 style="font-size: 20px; font-weight: bold; margin: 0;">📊 Calificaciones</h2>
+    <% if user_signed_in? && current_user.admin? %>
+      <%= link_to "➕ Nueva", new_taller_calificacione_path(@taller),
+          style: "padding: 8px 12px; background: #2563eb; color: white; border-radius: 6px; text-decoration: none; font-weight: 500;" %>
+    <% end %>
+  </div>
 
-  <%= link_to "Volver", talleres_path,
-        class: "px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600" %>
-  <% if user_signed_in? && current_user.admin? %>
-    <%= link_to "Crear otro Taller", new_taller_path,
-          class: "px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700" %>
+  <% if @calificaciones.any? %>
+    <div style="overflow-x: auto;">
+      <table style="width: 100%; border-collapse: collapse;">
+        <thead>
+          <tr style="background: #f3f4f6; border-bottom: 2px solid #d1d5db;">
+            <th style="padding: 12px; text-align: left; font-weight: 600;">Estudiante</th>
+            <th style="padding: 12px; text-align: left; font-weight: 600;">Nota</th>
+            <th style="padding: 12px; text-align: left; font-weight: 600;">Comentario</th>
+            <% if user_signed_in? && current_user.admin? %>
+              <th style="padding: 12px; text-align: left; font-weight: 600;">Acciones</th>
+            <% end %>
+          </tr>
+        </thead>
+        <tbody>
+          <% @calificaciones.each do |c| %>
+            <tr style="border-bottom: 1px solid #e5e7eb;">
+              <td style="padding: 12px;"><strong><%= c.estudiante.nombre %></strong></td>
+              <td style="padding: 12px;">
+                <span style="<%= if c.nota >= 5.5 then 'color: #16a34a; font-weight: 600;' elsif c.nota >= 4.0 then 'color: #f59e0b; font-weight: 600;' else 'color: #dc2626; font-weight: 600;' end %>">
+                  <%= number_with_precision(c.nota, precision: 1) %>/7.0
+                </span>
+              </td>
+              <td style="padding: 12px; max-width: 200px; word-break: break-word;"><%= truncate(c.descripcion, length: 40) %></td>
+              <% if user_signed_in? && current_user.admin? %>
+                <td style="padding: 12px; white-space: nowrap;">
+                  <%= link_to "✏️ Editar", edit_taller_calificacione_path(@taller, c), style: "margin-right: 8px; color: #f59e0b; text-decoration: none;" %>
+                  <%= link_to "🗑️ Eliminar", taller_calificacione_path(@taller, c), method: :delete,
+                        data: { confirm: "¿Seguro?" }, style: "color: #dc2626; text-decoration: none;" %>
+                </td>
+              <% end %>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  <% else %>
+    <p style="color: #9ca3af;">No hay calificaciones registradas aún.</p>
   <% end %>
+</div>
+
+<!-- BOTONES DE ACCIÓN -->
+<div style="display: flex; gap: 8px; flex-wrap: wrap;">
+  <% if user_signed_in? && current_user.admin? %>
+    <%= link_to "✏️ Editar Taller", edit_taller_path(@taller),
+        style: "padding: 10px 16px; background: #f59e0b; color: white; border-radius: 6px; text-decoration: none; font-weight: 500;" %>
+    <%= link_to "🗑️ Eliminar", taller_path(@taller), method: :delete, data: { confirm: "¿Seguro?" },
+        style: "padding: 10px 16px; background: #dc2626; color: white; border-radius: 6px; text-decoration: none; font-weight: 500;" %>
+  <% end %>
+  <%= link_to "← Volver", talleres_path,
+        style: "padding: 10px 16px; background: #e5e7eb; color: #4b5563; border-radius: 6px; text-decoration: none; font-weight: 500;" %>
 </div>

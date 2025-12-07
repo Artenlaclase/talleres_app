@@ -16,8 +16,8 @@
 
     <div style="margin-bottom: 20px; padding-bottom: 20px; border-bottom: 1px solid #e5e7eb;">
       <p style="margin: 0; color: #9ca3af; font-size: 14px; font-weight: 500;">NOTA</p>
-      <p style="margin: 8px 0; font-size: 28px; font-weight: 600; color: <%= if @calificacion.nota >= 70 then '#16a34a' elsif @calificacion.nota >= 60 then '#f59e0b' else '#dc2626' end %>;">
-        <%= number_to_percentage(@calificacion.nota, precision: 0) %>
+      <p style="margin: 8px 0; font-size: 28px; font-weight: 600; color: <%= if @calificacion.nota >= 5.5 then '#16a34a' elsif @calificacion.nota >= 4.0 then '#f59e0b' else '#dc2626' end %>;">
+        <%= number_with_precision(@calificacion.nota, precision: 1) %>/7.0
       </p>
     </div>
 
@@ -34,8 +34,8 @@
     </div>
 
     <div style="display: flex; gap: 8px;">
-      <%= link_to "✏️ Editar", edit_calificacion_path(@calificacion), style: "padding: 10px 16px; background: #f59e0b; color: white; border-radius: 6px; text-decoration: none; font-weight: 500; text-align: center; flex-grow: 1;" %>
-      <%= link_to "🗑️ Eliminar", calificacion_path(@calificacion), method: :delete,
+      <%= link_to "✏️ Editar", edit_calificacione_path(@calificacion), style: "padding: 10px 16px; background: #f59e0b; color: white; border-radius: 6px; text-decoration: none; font-weight: 500; text-align: center; flex-grow: 1;" %>
+      <%= link_to "🗑️ Eliminar", calificacione_path(@calificacion), method: :delete,
             data: { confirm: "¿Seguro?" }, style: "padding: 10px 16px; background: #dc2626; color: white; border-radius: 6px; text-decoration: none; font-weight: 500; text-align: center; flex-grow: 1;" %>
       <%= link_to "← Volver", calificaciones_path, style: "padding: 10px 16px; background: #e5e7eb; color: #4b5563; border-radius: 6px; text-decoration: none; font-weight: 500; text-align: center; flex-grow: 1;" %>
     </div>

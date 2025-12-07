@@ -14,8 +14,10 @@ Rails.application.routes.draw do
       post :bulk_create
     end
   end
-  resources :talleres
-  resources :calificaciones
+  resources :talleres do
+    resources :calificaciones, only: [:new, :create, :edit, :update, :destroy]
+  end
+  resources :calificaciones, only: [:index, :show]
   get "pages/home"
 
   root "pages#home"

@@ -3,7 +3,7 @@
 <div style="max-width: 600px; margin: 40px auto;">
   <h1 style="font-size: 24px; font-weight: bold; margin-bottom: 20px;">✏️ Editar Calificación</h1>
 
-  <%= form_with(model: @calificacion, local: true) do |f| %>
+  <%= form_with(model: @calificacion, local: true, url: calificacione_path(@calificacion), method: :patch) do |f| %>
     <% if @calificacion.errors.any? %>
       <div style="background: #fee2e2; border: 1px solid #fca5a5; color: #991b1b; padding: 12px; border-radius: 6px; margin-bottom: 20px;">
         <h2 style="font-weight: 600; margin-bottom: 8px;"><%= pluralize(@calificacion.errors.count, "error") %> encontrado:</h2>
@@ -30,8 +30,8 @@
     </div>
 
     <div style="margin-bottom: 20px;">
-      <label style="display: block; font-weight: 600; margin-bottom: 8px;">Nota (0-100)</label>
-      <%= f.number_field :nota, min: 0, max: 100, step: 1,
+      <label style="display: block; font-weight: 600; margin-bottom: 8px;">Nota (1.0 a 7.0)</label>
+      <%= f.number_field :nota, min: 1.0, max: 7.0, step: 0.1,
           style: "width: 100%; border: 1px solid #d1d5db; border-radius: 6px; padding: 10px 12px; font-size: 14px; font-family: inherit;" %>
     </div>
 
