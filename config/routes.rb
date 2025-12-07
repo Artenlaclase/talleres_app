@@ -16,7 +16,7 @@ Rails.application.routes.draw do
   end
   resources :talleres do
     resources :calificaciones, only: [:new, :create, :edit, :update, :destroy]
-    resources :inscripciones, only: [:new, :create]
+    resources :inscripciones, only: [:new, :create], as: :inscripcion
   end
   resources :calificaciones, only: [:index, :show]
   get "pages/home"

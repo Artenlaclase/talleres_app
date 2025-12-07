@@ -31,6 +31,32 @@ class EstudiantesController < ApplicationController
 
   # GET /estudiantes/1 or /estudiantes/1.json
   def show
+    # Cargar talleres de 3 fuentes: taller_id principal, calificaciones e inscripciones
+    talleres_set = Set.new
+    talleres_set.add(@estudiante.taller_id) if @estudiante.taller_id.present?
+    
+    Calificacion.where(estudiante_id: @estudiante.id).distinct.pluck(:taller_id).each do |taller_id|
+      talleres_set.add(taller_id)
+    end
+    
+    Inscripcion.where(estudiante_id: @estudiante.id).distinct.pluck(:taller_id).each do |taller_id|
+      talleres_set.add(taller_id)
+    end
+    
+    @talleres_inscritos = Taller.where(id: talleres_set.to_a).order(:nombre)
+    @talleres_faltantes = @estudiante.max_talleres_por_periodo - @talleres_inscritos.count
+    
+    # Cargar todos los talleres disponibles para la opción de inscripción
+    @talleres_disponibles = Taller.where.not(id: talleres_set.to_a).order(:nombre)
+    
+    # Cargar calificaciones agrupadas por taller
+    @calificaciones_por_taller = {}
+    @talleres_inscritos.each do |taller|
+      @calificaciones_por_taller[taller.id] = Calificacion.where(
+        estudiante_id: @estudiante.id,
+        taller_id: taller.id
+      ).order(nombre_evaluacion: :asc)
+    end
   end
 
   # GET /estudiantes/new
