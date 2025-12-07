@@ -6,3 +6,7 @@ eagerLoadControllersFrom("controllers", application)
 // Ensure menu controller is registered explicitly
 import MenuController from "controllers/menu_controller"
 application.register("menu", MenuController)
+
+// Explicit flash controller registration
+import FlashController from "controllers/flash_controller"
+application.register("flash", FlashController)

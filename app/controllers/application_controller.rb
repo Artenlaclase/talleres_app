@@ -8,6 +8,8 @@ class ApplicationController < ActionController::Base
   private
 
   def require_admin!
-    redirect_to root_path unless current_user&.admin?
+    unless current_user&.admin?
+      redirect_to root_path, alert: "Necesitas permisos de administrador para acceder."
+    end
   end
 end

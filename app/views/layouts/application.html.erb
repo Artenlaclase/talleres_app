@@ -43,6 +43,12 @@
             <%= link_to "Nuevo Taller", new_taller_path, class: "hover:text-blue-600" %>
             <%= link_to "Nuevo Estudiante", new_estudiante_path, class: "hover:text-blue-600" %>
           <% end %>
+          <% if user_signed_in? %>
+            <%= link_to "Cerrar sesión", destroy_user_session_path, data: { turbo_method: :delete }, class: "hover:text-blue-600" %>
+          <% else %>
+            <%= link_to "Iniciar sesión", new_user_session_path, class: "hover:text-blue-600" %>
+            <%= link_to "Registrarse", new_user_registration_path, class: "hover:text-blue-600" %>
+          <% end %>
         </div>
       </div>
 
@@ -56,12 +62,34 @@
             <%= link_to "Nuevo Taller", new_taller_path, class: "hover:text-blue-600" %>
             <%= link_to "Nuevo Estudiante", new_estudiante_path, class: "hover:text-blue-600" %>
           <% end %>
+          <% if user_signed_in? %>
+            <%= link_to "Cerrar sesión", destroy_user_session_path, data: { turbo_method: :delete }, class: "hover:text-blue-600" %>
+          <% else %>
+            <%= link_to "Iniciar sesión", new_user_session_path, class: "hover:text-blue-600" %>
+            <%= link_to "Registrarse", new_user_registration_path, class: "hover:text-blue-600" %>
+          <% end %>
         </div>
       </div>
     </nav>
 
     <!-- MAIN CONTENT -->
     <main class="container mx-auto mt-8 px-4 flex-1 pb-24">
+      <!-- Flash messages -->
+      <div class="container mx-auto px-4 mt-4 space-y-2">
+        <% if notice.present? %>
+          <div class="rounded border border-green-600 bg-white p-4 text-green-600 flex items-center justify-between" data-controller="flash" data-flash-timeout-value="4000">
+            <span><%= notice %></span>
+            <button type="button" class="text-sm text-green-600 hover:underline" data-action="click->flash#dismiss">Cerrar</button>
+          </div>
+        <% end %>
+        <% if alert.present? %>
+          <div class="rounded border border-red-600 bg-white p-4 text-red-600 flex items-center justify-between" data-controller="flash" data-flash-timeout-value="6000">
+            <span><%= alert %></span>
+            <button type="button" class="text-sm text-red-600 hover:underline" data-action="click->flash#dismiss">Cerrar</button>
+          </div>
+        <% end %>
+      </div>
+
       <%= yield %>
     </main>
 
