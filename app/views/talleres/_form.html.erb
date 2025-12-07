@@ -11,31 +11,58 @@
   <% end %>
 
   <div>
-    <%= form.label :nombre, class: "block font-semibold mb-1" %>
+    <%= form.label :nombre, "Nombre del taller", class: "block font-semibold mb-1" %>
     <%= form.text_field :nombre,
-        class: "w-full border border-gray-300 rounded px-3 py-2" %>
+        required: true,
+        placeholder: "Ej. Robótica básica",
+        class: "w-full border border-gray-300 rounded px-3 py-2 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500" %>
+    <% if @taller.errors[:nombre].present? %>
+      <p class="text-sm text-red-600 mt-1"><%= @taller.errors[:nombre].first %></p>
+    <% else %>
+      <p class="text-xs text-gray-500 mt-1">Debe tener entre 3 y 50 caracteres.</p>
+    <% end %>
   </div>
 
   <div>
-    <%= form.label :descripcion, class: "block font-semibold mb-1" %>
+    <%= form.label :descripcion, "Descripción", class: "block font-semibold mb-1" %>
     <%= form.text_area :descripcion,
-        class: "w-full border border-gray-300 rounded px-3 py-2", rows: 4 %>
+        placeholder: "Breve detalle del contenido del taller",
+        class: "w-full border border-gray-300 rounded px-3 py-2 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500", rows: 4 %>
+    <% if @taller.errors[:descripcion].present? %>
+      <p class="text-sm text-red-600 mt-1"><%= @taller.errors[:descripcion].first %></p>
+    <% else %>
+      <p class="text-xs text-gray-500 mt-1">Máximo 500 caracteres.</p>
+    <% end %>
   </div>
 
   <div>
-    <%= form.label :fecha, class: "block font-semibold mb-1" %>
+    <%= form.label :fecha, "Fecha", class: "block font-semibold mb-1" %>
     <%= form.date_field :fecha,
-        class: "w-full border border-gray-300 rounded px-3 py-2" %>
+        required: true,
+        class: "w-full border border-gray-300 rounded px-3 py-2 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500" %>
+    <% if @taller.errors[:fecha].present? %>
+      <p class="text-sm text-red-600 mt-1"><%= @taller.errors[:fecha].first %></p>
+    <% end %>
   </div>
 
   <div>
-    <%= form.label :cupos, class: "block font-semibold mb-1" %>
+    <%= form.label :cupos, "Cupos disponibles", class: "block font-semibold mb-1" %>
     <%= form.number_field :cupos,
-        class: "w-full border border-gray-300 rounded px-3 py-2" %>
+        min: 1,
+        step: 1,
+        required: true,
+        placeholder: "Ej. 20",
+        class: "w-full border border-gray-300 rounded px-3 py-2 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500" %>
+    <% if @taller.errors[:cupos].present? %>
+      <p class="text-sm text-red-600 mt-1"><%= @taller.errors[:cupos].first %></p>
+    <% else %>
+      <p class="text-xs text-gray-500 mt-1">Ingrese un número entero mayor a 0.</p>
+    <% end %>
   </div>
 
-  <div>
-    <%= form.submit class: "px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700" %>
+  <div class="flex items-center gap-2">
+    <%= form.submit (@taller.new_record? ? "Crear Taller" : "Actualizar Taller"), class: "px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700" %>
+    <%= link_to "Cancelar", talleres_path, class: "px-4 py-2 rounded border border-gray-300 text-gray-700 hover:bg-gray-50" %>
   </div>
 
 <% end %>

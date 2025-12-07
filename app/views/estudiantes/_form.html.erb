@@ -11,22 +11,33 @@
   <% end %>
 
   <div>
-    <%= form.label :nombre, class: "block font-semibold mb-1" %>
-    <%= form.text_field :nombre, class: "w-full border border-gray-300 rounded px-3 py-2" %>
+    <%= form.label :nombre, "Nombre del estudiante", class: "block font-semibold mb-1" %>
+    <%= form.text_field :nombre, required: true, placeholder: "Ej. Ana Pérez", class: "w-full border border-gray-300 rounded px-3 py-2 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500" %>
+    <% if estudiante.errors[:nombre].present? %>
+      <p class="text-sm text-red-600 mt-1"><%= estudiante.errors[:nombre].first %></p>
+    <% end %>
   </div>
 
   <div>
-    <%= form.label :curso, class: "block font-semibold mb-1" %>
-    <%= form.text_field :curso, class: "w-full border border-gray-300 rounded px-3 py-2" %>
+    <%= form.label :curso, "Curso/Grado", class: "block font-semibold mb-1" %>
+    <%= form.text_field :curso, placeholder: "Ej. 2°A", class: "w-full border border-gray-300 rounded px-3 py-2 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500" %>
+    <% if estudiante.errors[:curso].present? %>
+      <p class="text-sm text-red-600 mt-1"><%= estudiante.errors[:curso].first %></p>
+    <% end %>
   </div>
 
   <div>
-    <%= form.label :taller_id, class: "block font-semibold mb-1" %>
+    <%= form.label :taller_id, "Taller", class: "block font-semibold mb-1" %>
     <%= form.collection_select :taller_id, Taller.all, :id, :nombre,
-        {}, { class: "w-full border border-gray-300 rounded px-3 py-2" } %>
+        { prompt: "Seleccione un taller" },
+        { class: "w-full border border-gray-300 rounded px-3 py-2 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500" } %>
+    <% if estudiante.errors[:taller].present? || estudiante.errors[:taller_id].present? %>
+      <p class="text-sm text-red-600 mt-1"><%= (estudiante.errors[:taller].presence || estudiante.errors[:taller_id]).first %></p>
+    <% end %>
   </div>
 
-  <div>
-    <%= form.submit class: "px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700" %>
+  <div class="flex items-center gap-2">
+    <%= form.submit (estudiante.new_record? ? "Crear Estudiante" : "Actualizar Estudiante"), class: "px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700" %>
+    <%= link_to "Cancelar", estudiantes_path, class: "px-4 py-2 rounded border border-gray-300 text-gray-700 hover:bg-gray-50" %>
   </div>
 <% end %>

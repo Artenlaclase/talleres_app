@@ -27,6 +27,18 @@ Taller.find_or_create_by!(nombre: "APIs REST con Rails") do |taller|
   taller.fecha = Date.today + 21.days
   taller.cupos = 15
 end
+# Sample Estudiantes linked to existing Talleres
+begin
+  rob = Taller.find_by(nombre: "Robótica básica") || Taller.first
+  web = Taller.find_by(nombre: "Web con Rails") || Taller.second
+  ia  = Taller.find_by(nombre: "Introducción a IA") || Taller.third
+
+  Estudiante.find_or_create_by!(nombre: "Ana Pérez", curso: "2°A", taller: rob)
+  Estudiante.find_or_create_by!(nombre: "Luis Gómez", curso: "3°B", taller: web)
+  Estudiante.find_or_create_by!(nombre: "María López", curso: "1°C", taller: ia)
+rescue => e
+  puts "Seed warning: #{e.message}"
+end
 
 puts "✅ Seeds creados exitosamente"
 puts "Usuario admin: admin@example.com / password123"

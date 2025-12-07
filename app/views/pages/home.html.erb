@@ -1,2 +1,37 @@
-<h1>Hola Raúl, bienvenido a Talleres App</h1>
-<p>Find me in app/views/pages/home.html.erb</p>
+<div class="max-w-4xl mx-auto">
+	<h1 class="text-3xl font-bold mb-4">Bienvenido a Talleres App</h1>
+	<p class="text-gray-600 mb-6">Gestiona talleres y estudiantes de forma simple. Usa los accesos rápidos para crear nuevos registros.</p>
+
+	<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+		<div class="bg-white rounded-lg shadow p-6">
+			<h2 class="text-xl font-semibold mb-2">Talleres</h2>
+			<p class="text-sm text-gray-600 mb-4">Lista, crea y edita talleres disponibles.</p>
+			<div class="flex items-center gap-2">
+				<%= link_to "Ver Talleres", talleres_path, class: "px-4 py-2 rounded border border-gray-300 text-gray-700 hover:bg-gray-50" %>
+				<% if user_signed_in? && current_user.admin? %>
+					<%= link_to "Crear Taller", new_taller_path, class: "px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700" %>
+				<% end %>
+			</div>
+		</div>
+
+		<div class="bg-white rounded-lg shadow p-6">
+			<h2 class="text-xl font-semibold mb-2">Estudiantes</h2>
+			<p class="text-sm text-gray-600 mb-4">Gestiona estudiantes inscritos en los talleres.</p>
+			<div class="flex items-center gap-2">
+				<%= link_to "Ver Estudiantes", estudiantes_path, class: "px-4 py-2 rounded border border-gray-300 text-gray-700 hover:bg-gray-50" %>
+				<% if user_signed_in? && current_user.admin? %>
+					<%= link_to "Ingresar Estudiante", new_estudiante_path, class: "px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700" %>
+				<% end %>
+			</div>
+		</div>
+	</div>
+
+	<div class="mt-8 bg-white rounded-lg shadow p-6">
+		<h2 class="text-xl font-semibold mb-2">API</h2>
+		<p class="text-sm text-gray-600 mb-4">Consumo básico para apps móviles o React.</p>
+		<ul class="list-disc pl-5 text-sm text-gray-700">
+			<li><%= link_to "/api/v1/talleres", api_v1_talleres_path, class: "text-indigo-600 hover:text-indigo-800" %></li>
+			<li><%= link_to "/api/v1/estudiantes", api_v1_estudiantes_path, class: "text-indigo-600 hover:text-indigo-800" %></li>
+		</ul>
+	</div>
+</div>
