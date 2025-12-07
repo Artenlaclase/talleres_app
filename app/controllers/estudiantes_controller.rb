@@ -7,6 +7,7 @@ class EstudiantesController < ApplicationController
   # GET /estudiantes or /estudiantes.json
   def index
     @talleres = Taller.all
+    @cursos = Estudiante.distinct.pluck(:curso).compact
     @estudiantes = Estudiante.all
     if params[:curso].present?
       @estudiantes = @estudiantes.where(curso: params[:curso])
