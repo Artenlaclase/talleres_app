@@ -18,6 +18,12 @@ class EstudiantesController < ApplicationController
     @estudiante = Estudiante.new
   end
 
+  # GET /estudiantes/bulk_new
+  def bulk_new
+    @talleres = Taller.all
+    @rows = 10
+  end
+
   # GET /estudiantes/1/edit
   def edit
   end
@@ -34,6 +40,32 @@ class EstudiantesController < ApplicationController
         format.html { render :new, status: :unprocessable_entity }
         format.json { render json: @estudiante.errors, status: :unprocessable_entity }
       end
+    end
+  end
+
+  # POST /estudiantes/bulk_create
+  def bulk_create
+    entries = params.require(:estudiantes).permit!.to_h
+    created = 0
+    errors = []
+
+    entries.values.each_with_index do |entry, idx|
+      next if entry.values.all?(&:blank?)
+      e = Estudiante.new(entry.slice("nombre", "curso", "taller_id"))
+      unless e.save
+        errors << "Fila #{idx + 1}: #{e.errors.full_messages.join(', ')}"
+      else
+        created += 1
+      end
+    end
+
+    if errors.empty?
+      redirect_to estudiantes_path, notice: "Se crearon #{created} estudiantes exitosamente."
+    else
+      flash[:alert] = "Algunas filas tienen errores: #{errors.join(' | ')}"
+      @talleres = Taller.all
+      @rows = entries.size.presence || 10
+      render :bulk_new, status: :unprocessable_entity
     end
   end
 

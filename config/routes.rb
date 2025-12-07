@@ -8,7 +8,12 @@ Rails.application.routes.draw do
     end
   end
 
-  resources :estudiantes
+  resources :estudiantes do
+    collection do
+      get :bulk_new
+      post :bulk_create
+    end
+  end
   resources :talleres
   get "pages/home"
 

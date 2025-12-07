@@ -1,0 +1,50 @@
+<% content_for :title, "Ingresar 10 Estudiantes" %>
+
+<h1 class="text-3xl font-bold mb-6">Ingresar 10 Estudiantes</h1>
+
+<% if flash[:alert].present? %>
+  <div data-controller="flash" class="mb-4">
+    <div class="bg-red-100 text-red-700 px-4 py-2 rounded">
+      <p><%= flash[:alert] %></p>
+    </div>
+  </div>
+<% end %>
+
+<%= form_with url: bulk_create_estudiantes_path, method: :post, local: true do %>
+  <div class="overflow-x-auto">
+    <table class="min-w-full bg-white border border-gray-200 rounded-lg overflow-hidden shadow">
+      <thead class="bg-gray-100 border-b">
+        <tr>
+          <th class="px-4 py-2 text-left font-semibold">Nombre del estudiante</th>
+          <th class="px-4 py-2 text-left font-semibold">Curso/Grado</th>
+          <th class="px-4 py-2 text-left font-semibold">Taller</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @rows.times do |i| %>
+          <tr class="border-b">
+            <td class="px-4 py-2">
+              <input type="text" name="estudiantes[<%= i %>][nombre]" placeholder="Ej. Ana Pérez" class="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" />
+            </td>
+            <td class="px-4 py-2">
+              <input type="text" name="estudiantes[<%= i %>][curso]" placeholder="Ej. 2°A" class="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" />
+            </td>
+            <td class="px-4 py-2">
+              <select name="estudiantes[<%= i %>][taller_id]" class="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <option value="">Seleccione un taller</option>
+                <% @talleres.each do |t| %>
+                  <option value="<%= t.id %>"><%= t.nombre %></option>
+                <% end %>
+              </select>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="mt-6 flex items-center gap-3">
+    <%= link_to "Cancelar", estudiantes_path, class: "px-4 py-2 rounded border border-gray-300 text-gray-700 hover:bg-gray-50" %>
+    <%= submit_tag "Guardar", class: "px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700" %>
+  </div>
+<% end %>
