@@ -6,7 +6,7 @@ class Taller < ApplicationRecord
   validates :fecha, presence: true
 
   has_many :estudiantes, dependent: :restrict_with_error
-  has_many :calificaciones, dependent: :destroy
+  has_many :calificaciones, dependent: :destroy, class_name: "Calificacion"
   has_many :estudiantes_calificados, through: :calificaciones, source: :estudiante
 
   def cupos_restantes

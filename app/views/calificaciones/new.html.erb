@@ -3,7 +3,7 @@
 <div style="max-width: 600px; margin: 40px auto;">
   <h1 style="font-size: 24px; font-weight: bold; margin-bottom: 20px;">➕ Nueva Calificación</h1>
 
-  <%= form_with(model: @calificacion, local: true, url: calificaciones_path) do |f| %>
+  <%= form_with(model: [@taller, @calificacion], local: true, url: taller_calificaciones_path(@taller)) do |f| %>
     <% if @calificacion.errors.any? %>
       <div style="background: #fee2e2; border: 1px solid #fca5a5; color: #991b1b; padding: 12px; border-radius: 6px; margin-bottom: 20px;">
         <h2 style="font-weight: 600; margin-bottom: 8px;"><%= pluralize(@calificacion.errors.count, "error") %> encontrado:</h2>
@@ -15,17 +15,16 @@
       </div>
     <% end %>
 
+    <div style="margin-bottom: 20px; padding: 12px; background: #f0f9ff; border: 1px solid #bfdbfe; border-radius: 6px;">
+      <p style="margin: 0; color: #1e40af; font-weight: 500;">
+        📌 Taller: <strong><%= @taller.nombre %></strong>
+      </p>
+    </div>
+
     <div style="margin-bottom: 20px;">
       <label style="display: block; font-weight: 600; margin-bottom: 8px;">Estudiante</label>
       <%= f.select :estudiante_id, options_from_collection_for_select(@estudiantes, :id, :nombre, @calificacion.estudiante_id),
           { prompt: "Selecciona un estudiante" },
-          style: "width: 100%; border: 1px solid #d1d5db; border-radius: 6px; padding: 10px 12px; font-size: 14px; font-family: inherit;" %>
-    </div>
-
-    <div style="margin-bottom: 20px;">
-      <label style="display: block; font-weight: 600; margin-bottom: 8px;">Taller</label>
-      <%= f.select :taller_id, options_from_collection_for_select(@talleres, :id, :nombre, @calificacion.taller_id),
-          { prompt: "Selecciona un taller" },
           style: "width: 100%; border: 1px solid #d1d5db; border-radius: 6px; padding: 10px 12px; font-size: 14px; font-family: inherit;" %>
     </div>
 
@@ -43,7 +42,7 @@
 
     <div style="display: flex; gap: 8px;">
       <%= f.submit "Guardar", style: "padding: 10px 16px; background: #2563eb; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 500; flex-grow: 1;" %>
-      <%= link_to "Cancelar", calificaciones_path, style: "padding: 10px 16px; background: #e5e7eb; color: #4b5563; border-radius: 6px; text-decoration: none; font-weight: 500; text-align: center; flex-grow: 1;" %>
+      <%= link_to "Cancelar", taller_path(@taller), style: "padding: 10px 16px; background: #e5e7eb; color: #4b5563; border-radius: 6px; text-decoration: none; font-weight: 500; text-align: center; flex-grow: 1;" %>
     </div>
   <% end %>
 </div>

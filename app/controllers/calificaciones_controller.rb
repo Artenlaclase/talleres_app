@@ -1,6 +1,7 @@
 class CalificacionesController < ApplicationController
   before_action :authenticate_user!
-  before_action :authorize_admin!
+  before_action :authorize_admin!, except: [:index, :show]
+  before_action :set_taller, only: [:new, :create, :edit, :update, :destroy]
   before_action :set_calificacion, only: [:show, :edit, :update, :destroy]
 
   def index
@@ -27,47 +28,48 @@ class CalificacionesController < ApplicationController
   end
 
   def new
-    @calificacion = Calificacion.new
-    @estudiantes = Estudiante.all.order(:nombre)
-    @talleres = Taller.all.order(:nombre)
+    @calificacion = @taller.calificaciones.build
+    @estudiantes = @taller.estudiantes.order(:nombre)
   end
 
   def create
-    @calificacion = Calificacion.new(calificacion_params)
+    @calificacion = @taller.calificaciones.build(calificacion_params)
     
     if @calificacion.save
-      redirect_to @calificacion, notice: "Calificación creada exitosamente."
+      redirect_to taller_path(@taller), notice: "Calificación creada exitosamente."
     else
-      @estudiantes = Estudiante.all.order(:nombre)
-      @talleres = Taller.all.order(:nombre)
+      @estudiantes = @taller.estudiantes.order(:nombre)
       render :new, status: :unprocessable_entity
     end
   end
 
   def edit
-    @estudiantes = Estudiante.all.order(:nombre)
-    @talleres = Taller.all.order(:nombre)
+    @estudiantes = @taller.estudiantes.order(:nombre)
   end
 
   def update
     if @calificacion.update(calificacion_params)
-      redirect_to @calificacion, notice: "Calificación actualizada exitosamente."
+      redirect_to taller_path(@taller), notice: "Calificación actualizada exitosamente."
     else
-      @estudiantes = Estudiante.all.order(:nombre)
-      @talleres = Taller.all.order(:nombre)
+      @estudiantes = @taller.estudiantes.order(:nombre)
       render :edit, status: :unprocessable_entity
     end
   end
 
   def destroy
     @calificacion.destroy
-    redirect_to calificaciones_url, notice: "Calificación eliminada exitosamente."
+    redirect_to taller_path(@taller), notice: "Calificación eliminada exitosamente."
   end
 
   private
 
+  def set_taller
+    @taller = Taller.find(params[:taller_id])
+  end
+
   def set_calificacion
     @calificacion = Calificacion.find(params[:id])
+    @taller = @calificacion.taller
   end
 
   def authorize_admin!
@@ -75,6 +77,6 @@ class CalificacionesController < ApplicationController
   end
 
   def calificacion_params
-    params.require(:calificacion).permit(:estudiante_id, :taller_id, :nota, :descripcion)
+    params.require(:calificacion).permit(:estudiante_id, :nota, :descripcion)
   end
 end
