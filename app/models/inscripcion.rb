@@ -5,7 +5,7 @@ class Inscripcion < ApplicationRecord
   belongs_to :taller
 
   # Estados de inscripción
-  enum estado: { pendiente: 'pendiente', aprobada: 'aprobada', rechazada: 'rechazada' }
+  enum :estado, { pendiente: 'pendiente', aprobada: 'aprobada', rechazada: 'rechazada' }, default: :pendiente
 
   validates :estudiante_id, uniqueness: { scope: :taller_id, message: "ya está inscrito en este taller" }
   validates :estado, inclusion: { in: %w(pendiente aprobada rechazada), message: "%{value} no es un estado válido" }

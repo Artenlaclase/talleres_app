@@ -65,6 +65,21 @@ group :test do
   # Use system testing [https://guides.rubyonrails.org/testing.html#system-testing]
   gem "capybara"
   gem "selenium-webdriver"
+
+  # RSpec for Rails
+  gem "rspec-rails", "~> 7.0"
+
+  # Factory definitions for tests
+  gem "factory_bot_rails", "~> 6.4"
+
+  # Fake data generation
+  gem "faker", "~> 3.2"
+
+  # Matchers for Rails validations and associations
+  gem "shoulda-matchers", "~> 5.1"
+
+  # Controller testing helpers
+  gem "rails-controller-testing", "~> 1.0"
 end
 
 gem "devise", "~> 4.9"

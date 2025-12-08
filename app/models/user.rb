@@ -4,9 +4,9 @@ class User < ApplicationRecord
 
   has_one :estudiante, dependent: :destroy
 
-  enum role: { usuario: 'usuario', admin: 'admin' }
+  enum :role, { usuario: 'usuario', admin: 'admin' }, default: :usuario
 
-  validates :email, presence: true, uniqueness: true, format: { with: URI::MailTo::EMAIL_REGEXP }
+  validates :email, presence: true, uniqueness: { case_sensitive: false }, format: { with: URI::MailTo::EMAIL_REGEXP }
 
   scope :activos, -> { where(locked_at: nil) }
   scope :admins, -> { where(role: 'admin') }
