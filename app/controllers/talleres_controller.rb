@@ -7,6 +7,8 @@ class TalleresController < ApplicationController
   # GET /talleres
   def index
     @talleres = Taller.all
+    # Cargar todas las inscripciones pendientes de todos los talleres
+    @inscripciones_pendientes_totales = Inscripcion.where(estado: 'pendiente').includes(:estudiante, :taller).order(id: :desc)
   end
 
   # GET /talleres/:id

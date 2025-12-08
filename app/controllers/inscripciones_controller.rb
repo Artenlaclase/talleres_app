@@ -41,10 +41,10 @@ class InscripcionesController < ApplicationController
       return
     end
 
-    # Crear la inscripción en estado "pendiente"
-    inscripcion = @taller.inscripciones.build(estudiante_id: estudiante.id, estado: 'pendiente')
+    # Crear la inscripción en estado "aprobada" (el admin la añade directamente sin esperar aprobación)
+    inscripcion = @taller.inscripciones.build(estudiante_id: estudiante.id, estado: 'aprobada')
     if inscripcion.save
-      redirect_to @taller, notice: "⏳ Solicitud de inscripción enviada para #{estudiante.nombre}. Pendiente de aprobación."
+      redirect_to @taller, notice: "✓ #{estudiante.nombre} ha sido inscrito en #{@taller.nombre} correctamente."
     else
       redirect_to @taller, alert: "Error al inscribir: #{inscripcion.errors.full_messages.join(', ')}"
     end

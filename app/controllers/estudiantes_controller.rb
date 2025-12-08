@@ -2,7 +2,7 @@ class EstudiantesController < ApplicationController
   before_action :authenticate_user!
   # Permite crear estudiantes a cualquier usuario autenticado; restringe edición/eliminación a admin
   before_action :require_admin!, only: %i[ edit update destroy ]
-  before_action :set_estudiante, only: %i[ show edit update destroy ]
+  before_action :set_estudiante, only: %i[ show edit update destroy request_inscription ]
 
   # GET /estudiantes or /estudiantes.json
   def index

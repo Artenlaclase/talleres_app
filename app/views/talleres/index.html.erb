@@ -1,5 +1,29 @@
 <h1 style="font-size: 28px; font-weight: bold; margin-bottom: 20px;">Listado de Talleres</h1>
 
+<!-- SECCIÓN DE INSCRIPCIONES PENDIENTES -->
+<% if @inscripciones_pendientes_totales.any? %>
+  <div style="background: #fef3c7; border: 1px solid #fcd34d; padding: 20px; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); margin-bottom: 24px;">
+    <h2 style="font-size: 20px; font-weight: bold; margin-bottom: 16px; color: #92400e;">⏳ Solicitudes de Inscripción Pendientes (<%= @inscripciones_pendientes_totales.count %>)</h2>
+    <div style="display: grid; gap: 12px; max-height: 400px; overflow-y: auto;">
+      <% @inscripciones_pendientes_totales.each do |inscripcion| %>
+        <div style="background: white; border: 1px solid #fcd34d; border-radius: 6px; padding: 16px; display: flex; justify-content: space-between; align-items: center;">
+          <div style="flex-grow: 1;">
+            <p style="margin: 0; font-weight: 600; color: #1f2937; font-size: 16px;"><%= inscripcion.estudiante.nombre %></p>
+            <p style="margin: 4px 0 0 0; color: #6b7280; font-size: 14px;"><%= inscripcion.estudiante.curso %></p>
+            <p style="margin: 8px 0 0 0; color: #92400e; font-weight: 500; font-size: 14px;">📚 <%= link_to inscripcion.taller.nombre, taller_path(inscripcion.taller), style: "color: #1f2937; text-decoration: none; font-weight: 600;" %></p>
+          </div>
+          <div style="display: flex; gap: 8px; margin-left: 16px;">
+            <%= button_to "✓ Aprobar", { action: :approve, controller: :inscripciones, id: inscripcion.id }, method: :patch,
+                  style: "padding: 8px 16px; background: #16a34a; color: white; border: none; border-radius: 6px; font-weight: 600; cursor: pointer; white-space: nowrap;" %>
+            <%= button_to "✗ Rechazar", { action: :reject, controller: :inscripciones, id: inscripcion.id }, method: :patch,
+                  style: "padding: 8px 16px; background: #dc2626; color: white; border: none; border-radius: 6px; font-weight: 600; cursor: pointer; white-space: nowrap;" %>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </div>
+<% end %>
+
 <div style="background: white; padding: 20px; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
   <% if @talleres.any? %>
     <!-- VERSION DESKTOP -->
