@@ -1,7 +1,7 @@
 # Funciones de ayuda para TalleresApp
 # Agrega esto a tu $PROFILE de PowerShell para usarlas globalmente
 
-function Talleres-Export {
+function Export-TalleresData {
     param(
         [string]$Path = "backup"
     )
@@ -11,7 +11,7 @@ function Talleres-Export {
     Write-Host "✅ Backup completado" -ForegroundColor Green
 }
 
-function Talleres-Import {
+function Import-TalleresData {
     param(
         [string]$Path = "backup"
     )
@@ -21,35 +21,35 @@ function Talleres-Import {
     Write-Host "✅ Restauración completada" -ForegroundColor Green
 }
 
-function Talleres-Reset {
+function Reset-TalleresDatabase {
     Write-Host "⚠️ Reseteando base de datos..." -ForegroundColor Yellow
     bundle exec rails db:reset
     Write-Host "✅ Base de datos reseteada" -ForegroundColor Green
 }
 
-function Talleres-Verify {
+function Test-TalleresData {
     Write-Host "🔍 Verificando datos..." -ForegroundColor Cyan
     bundle exec rails runner scripts/verify_data.rb
 }
 
-function Talleres-Seed {
+function Initialize-TalleresData {
     Write-Host "🌱 Inyectando datos de muestra..." -ForegroundColor Green
     bundle exec rails db:seed
     Write-Host "✅ Seeds completadas" -ForegroundColor Green
 }
 
-function Talleres-Console {
+function Show-TalleresConsole {
     Write-Host "🖥️ Abriendo consola de Rails..." -ForegroundColor Cyan
     bundle exec rails console
 }
 
 # Alias cortos
-Set-Alias -Name talleres-exp -Value Talleres-Export -Force
-Set-Alias -Name talleres-imp -Value Talleres-Import -Force
-Set-Alias -Name talleres-rst -Value Talleres-Reset -Force
-Set-Alias -Name talleres-ver -Value Talleres-Verify -Force
-Set-Alias -Name talleres-seed -Value Talleres-Seed -Force
-Set-Alias -Name talleres-con -Value Talleres-Console -Force
+Set-Alias -Name talleres-exp -Value Export-TalleresData -Force
+Set-Alias -Name talleres-imp -Value Import-TalleresData -Force
+Set-Alias -Name talleres-rst -Value Reset-TalleresDatabase -Force
+Set-Alias -Name talleres-tst -Value Test-TalleresData -Force
+Set-Alias -Name talleres-init -Value Initialize-TalleresData -Force
+Set-Alias -Name talleres-con -Value Show-TalleresConsole -Force
 
 Write-Host "✅ Funciones de TalleresApp cargadas" -ForegroundColor Green
-Write-Host "Usa: talleres-exp, talleres-imp, talleres-rst, talleres-ver, talleres-seed, talleres-con" -ForegroundColor Yellow
+Write-Host "Usa: talleres-exp, talleres-imp, talleres-rst, talleres-tst, talleres-init, talleres-con" -ForegroundColor Yellow
