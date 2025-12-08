@@ -1,0 +1,50 @@
+version: '3.8'
+
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: talleres-app
+    ports:
+      - "3000:3000"
+    environment:
+      RAILS_ENV: production
+      RAILS_LOG_TO_STDOUT: "true"
+      RAILS_SERVE_STATIC_FILES: "true"
+      DATABASE_URL: sqlite3:///app/storage/production.sqlite3
+    volumes:
+      - ./storage:/app/storage
+      - ./log:/app/log
+    command: >
+      sh -c "
+      bundle exec rails db:create &&
+      bundle exec rails db:migrate &&
+      bundle exec rails db:seed &&
+      bundle exec rails s -b 0.0.0.0
+      "
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/rails/health/live"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # Servicio de desarrollo alternativo (comentado)
+  # Descomenta para desarrollo local con live reload
+  # dev:
+  #   build:
+  #     context: .
+  #     dockerfile: Dockerfile.dev
+  #   container_name: talleres-app-dev
+  #   ports:
+  #     - "3000:3000"
+  #   environment:
+  #     RAILS_ENV: development
+  #     RAILS_LOG_TO_STDOUT: "true"
+  #   volumes:
+  #     - .:/app
+  #     - /app/node_modules
+  #   command: bin/dev
+  #   restart: unless-stopped
