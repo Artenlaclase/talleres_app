@@ -165,6 +165,12 @@ class EstudiantesController < ApplicationController
       return
     end
 
+    # Verificar si hay cupos disponibles en el taller
+    if taller.cupos_restantes <= 0
+      redirect_to @estudiante, alert: "❌ El taller '#{taller.nombre}' está lleno. No hay cupos disponibles."
+      return
+    end
+
     # Crear la inscripción en estado "pendiente"
     inscripcion = taller.inscripciones.build(estudiante_id: @estudiante.id, estado: 'pendiente')
     if inscripcion.save

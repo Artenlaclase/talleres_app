@@ -12,7 +12,7 @@ class Taller < ApplicationRecord
   has_many :estudiantes_inscritos, through: :inscripciones, source: :estudiante
 
   def cupos_restantes
-    inscritos = estudiantes.count + inscripciones.count
+    inscritos = estudiantes.count + inscripciones.where(estado: 'aprobada').count
     [cupos - inscritos, 0].max
   end
 

@@ -29,7 +29,8 @@ class CalificacionesController < ApplicationController
 
   def new
     @calificacion = @taller.calificaciones.build
-    @estudiantes = @taller.estudiantes.order(:nombre)
+    # Incluir estudiantes directos (taller_id) + estudiantes inscritos con aprobación
+    @estudiantes = (@taller.estudiantes + @taller.estudiantes_inscritos.where(inscripciones: { estado: 'aprobada' })).uniq.sort_by(&:nombre)
   end
 
   def create
@@ -38,20 +39,20 @@ class CalificacionesController < ApplicationController
     if @calificacion.save
       redirect_to taller_path(@taller), notice: "Calificación creada exitosamente."
     else
-      @estudiantes = @taller.estudiantes.order(:nombre)
+      @estudiantes = (@taller.estudiantes + @taller.estudiantes_inscritos.where(inscripciones: { estado: 'aprobada' })).uniq.sort_by(&:nombre)
       render :new, status: :unprocessable_entity
     end
   end
 
   def edit
-    @estudiantes = @taller.estudiantes.order(:nombre)
+    @estudiantes = (@taller.estudiantes + @taller.estudiantes_inscritos.where(inscripciones: { estado: 'aprobada' })).uniq.sort_by(&:nombre)
   end
 
   def update
     if @calificacion.update(calificacion_params)
       redirect_to taller_path(@taller), notice: "Calificación actualizada exitosamente."
     else
-      @estudiantes = @taller.estudiantes.order(:nombre)
+      @estudiantes = (@taller.estudiantes + @taller.estudiantes_inscritos.where(inscripciones: { estado: 'aprobada' })).uniq.sort_by(&:nombre)
       render :edit, status: :unprocessable_entity
     end
   end

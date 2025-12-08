@@ -1,8 +1,8 @@
 class InscripcionesController < ApplicationController
   before_action :authenticate_user!
-  before_action :require_admin!, only: %i[new create approve reject]
+  before_action :require_admin!, only: %i[new create approve reject destroy]
   before_action :set_taller, only: %i[new create]
-  before_action :set_inscripcion, only: %i[approve reject]
+  before_action :set_inscripcion, only: %i[approve reject destroy]
 
   # GET /talleres/:taller_id/inscripciones/new
   def new
@@ -41,6 +41,12 @@ class InscripcionesController < ApplicationController
       return
     end
 
+    # Verificar si hay cupos disponibles en el taller
+    if @taller.cupos_restantes <= 0
+      redirect_to @taller, alert: "No hay cupos disponibles en este taller. Cupos: #{@taller.cupos}, Inscritos: #{@taller.estudiantes.count + @taller.inscripciones.where(estado: 'aprobada').count}"
+      return
+    end
+
     # Crear la inscripción en estado "aprobada" (el admin la añade directamente sin esperar aprobación)
     inscripcion = @taller.inscripciones.build(estudiante_id: estudiante.id, estado: 'aprobada')
     if inscripcion.save
@@ -66,6 +72,14 @@ class InscripcionesController < ApplicationController
     else
       redirect_to @inscripcion.taller, alert: "Error al rechazar inscripción"
     end
+  end
+
+  # DELETE /inscripciones/:id
+  def destroy
+    taller = @inscripcion.taller
+    estudiante_nombre = @inscripcion.estudiante.nombre
+    @inscripcion.destroy
+    redirect_to taller, notice: "✓ #{estudiante_nombre} ha sido desinscrito del taller."
   end
 
   private

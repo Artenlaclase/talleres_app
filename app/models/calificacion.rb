@@ -15,7 +15,11 @@ class Calificacion < ApplicationRecord
 
   def estudiante_pertenece_taller
     return unless estudiante && taller
-    unless estudiante.taller_id == taller.id
+    # Verificar si está inscrito directamente (taller_id) o a través de inscripciones con aprobación
+    direct_inscribed = estudiante.taller_id == taller.id
+    approved_inscription = taller.inscripciones.exists?(estudiante_id: estudiante.id, estado: 'aprobada')
+    
+    unless direct_inscribed || approved_inscription
       errors.add(:base, "El estudiante no está inscrito en este taller")
     end
   end
