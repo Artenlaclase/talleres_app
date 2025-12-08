@@ -67,7 +67,7 @@ group :test do
   gem "selenium-webdriver"
 
   # RSpec for Rails
-  gem "rspec-rails", "~> 7.0"
+  gem "rspec-rails", "~> 8.0"
 
   # Factory definitions for tests
   gem "factory_bot_rails", "~> 6.4"
