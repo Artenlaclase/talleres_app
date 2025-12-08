@@ -25,6 +25,7 @@ Rails.application.routes.draw do
     member do
       patch :approve
       patch :reject
+      delete :destroy
     end
   end
   resources :calificaciones, only: [:index, :show]

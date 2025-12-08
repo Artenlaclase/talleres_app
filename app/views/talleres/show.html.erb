@@ -57,9 +57,19 @@
   <% if @estudiantes_taller.any? %>
     <div style="space-y: 8px;">
       <% @estudiantes_taller.each do |e| %>
-        <div style="padding: 12px; border-bottom: 1px solid #e5e7eb;">
-          <p style="margin: 0; color: #1f2937; font-weight: 500;"><%= e.nombre %></p>
-          <p style="margin: 4px 0 0 0; color: #9ca3af; font-size: 14px;"><%= e.curso %></p>
+        <div style="padding: 12px; border-bottom: 1px solid #e5e7eb; display: flex; justify-content: space-between; align-items: center;">
+          <div>
+            <p style="margin: 0; color: #1f2937; font-weight: 500;"><%= e.nombre %></p>
+            <p style="margin: 4px 0 0 0; color: #9ca3af; font-size: 14px;"><%= e.curso %></p>
+          </div>
+          <% if user_signed_in? && current_user.admin? %>
+            <% inscripcion = @taller.inscripciones.find_by(estudiante_id: e.id) %>
+            <% if inscripcion %>
+              <%= button_to "🗑️ Desinscribir", { action: :destroy, controller: :inscripciones, id: inscripcion.id }, method: :delete,
+                    data: { confirm: "¿Eliminar este estudiante del taller?" },
+                    style: "padding: 6px 10px; background: #dc2626; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: 500; font-size: 13px;" %>
+            <% end %>
+          <% end %>
         </div>
       <% end %>
     </div>
