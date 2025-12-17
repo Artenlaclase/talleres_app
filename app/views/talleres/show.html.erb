@@ -53,8 +53,8 @@
 
 <!-- ESTUDIANTES INSCRITOS -->
 <div style="background: white; padding: 20px; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); margin-bottom: 24px;">
-  <h2 style="font-size: 20px; font-weight: bold; margin-bottom: 16px;">👥 Estudiantes inscritos (<%= @estudiantes_taller.count %>)</h2>
-  <% if @estudiantes_taller.any? %>
+  <h2 style="font-size: 20px; font-weight: bold; margin-bottom: 16px;">👥 Estudiantes inscritos (<%= @estudiantes_taller&.count || 0 %>)</h2>
+  <% if @estudiantes_taller&.any? %>
     <div style="space-y: 8px;">
       <% @estudiantes_taller.each do |e| %>
         <div style="padding: 12px; border-bottom: 1px solid #e5e7eb; display: flex; justify-content: space-between; align-items: center;">
@@ -94,7 +94,7 @@
     <% end %>
   </div>
 
-  <% if @estudiantes_taller.any? %>
+  <% if @estudiantes_taller&.any? %>
     <div style="overflow-x: auto;">
       <table style="width: 100%; border-collapse: collapse;">
         <thead>
@@ -110,7 +110,7 @@
           </tr>
         </thead>
         <tbody>
-          <% @estudiantes_taller.each do |estudiante| %>
+          <% (@estudiantes_taller || []).each do |estudiante| %>
             <% calificaciones = @calificaciones.where(estudiante_id: estudiante.id).sort_by { |c| c.created_at } %>
             <% promedio = calificaciones.any? ? (calificaciones.sum(&:nota) / calificaciones.count).round(1) : nil %>
             <tr style="border-bottom: 1px solid #e5e7eb;">
