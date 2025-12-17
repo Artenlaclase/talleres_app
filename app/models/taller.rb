@@ -19,7 +19,8 @@ class Taller < ApplicationRecord
   scope :orden_alfabetico, -> { order(nombre: :asc) }
 
   def cupos_restantes
-    inscritos = estudiantes.count + inscripciones.aprobadas.count
+    # Contar solo inscripciones aprobadas
+    inscritos = inscripciones.where(estado: 'aprobada').count
     [cupos - inscritos, 0].max
   end
 
@@ -28,16 +29,14 @@ class Taller < ApplicationRecord
   end
 
   def total_inscritos
-    estudiantes.count + inscripciones.aprobadas.count
+    inscripciones.where(estado: 'aprobada').count
   end
-
-  validate :cupos_no_menor_a_inscritos
 
   private
 
   def cupos_no_menor_a_inscritos
     return if cupos.nil?
-    inscritos = estudiantes.count + inscripciones.aprobadas.count
+    inscritos = inscripciones.where(estado: 'aprobada').count
     if cupos < inscritos
       errors.add(:cupos, "No puede ser menor que los estudiantes inscritos (#{inscritos}).")
     end

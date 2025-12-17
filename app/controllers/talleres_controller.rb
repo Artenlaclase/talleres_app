@@ -28,18 +28,18 @@ class TalleresController < ApplicationController
   def show
     @calificaciones = @taller.calificaciones.includes(:estudiante)
     
-    # Obtener todos los estudiantes del taller:
-    # 1. Los que tienen inscripciones APROBADAS en este taller (fuente principal)
-    # 2. Los que tienen taller_id = @taller.id (legacy, si aplica)
-    # 3. Los que tienen calificaciones en este taller
-    estudiantes_por_inscripcion = @taller.estudiantes_inscritos.where(inscripciones: { estado: 'aprobada' })
-    estudiantes_por_taller = Estudiante.where(taller_id: @taller.id)
-    estudiantes_por_calificaciones = Estudiante.joins(:calificaciones)
-                                               .where(calificaciones: { taller_id: @taller.id })
-                                               .distinct
+    # Obtener estudiantes con inscripciones aprobadas (fuente principal)
+    @estudiantes_taller = @taller.estudiantes_inscritos.where(inscripciones: { estado: 'aprobada' }).distinct.to_a
     
-    # Combinar y desduplicar
-    @estudiantes_taller = (estudiantes_por_inscripcion.to_a + estudiantes_por_taller.to_a + estudiantes_por_calificaciones.to_a).uniq { |e| e.id } || []
+    # Agregar estudiantes con legacy taller_id (si existen y no están ya incluidos)
+    estudiantes_legacy = Estudiante.where(taller_id: @taller.id).to_a
+    @estudiantes_taller = (@estudiantes_taller + estudiantes_legacy).uniq { |e| e.id }
+    
+    # Agregar estudiantes con calificaciones en este taller (si existen y no están ya incluidos)
+    estudiantes_calificados = Estudiante.joins(:calificaciones)
+                                        .where(calificaciones: { taller_id: @taller.id })
+                                        .distinct.to_a
+    @estudiantes_taller = (@estudiantes_taller + estudiantes_calificados).uniq { |e| e.id }
     
     # Cargar inscripciones pendientes para aprobación
     @inscripciones_pendientes = @taller.inscripciones.where(estado: 'pendiente').includes(:estudiante)
