@@ -20,6 +20,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_08_025944) do
     t.integer "taller_id", null: false
     t.string "tema"
     t.datetime "updated_at", null: false
+    t.index ["estudiante_id", "taller_id", "nombre_evaluacion"], name: "idx_calificaciones_estudiante_taller_evaluacion", unique: true
     t.index ["estudiante_id"], name: "index_calificaciones_on_estudiante_id"
     t.index ["taller_id"], name: "index_calificaciones_on_taller_id"
   end
@@ -29,7 +30,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_08_025944) do
     t.string "curso"
     t.integer "max_talleres_por_periodo", default: 3
     t.string "nombre"
-    t.integer "taller_id", null: false
+    t.integer "taller_id"
     t.datetime "updated_at", null: false
     t.integer "user_id"
     t.index ["taller_id"], name: "index_estudiantes_on_taller_id"

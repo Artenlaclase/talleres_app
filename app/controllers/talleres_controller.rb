@@ -6,9 +6,22 @@ class TalleresController < ApplicationController
 
   # GET /talleres
   def index
-    @talleres = Taller.all
-    # Cargar todas las inscripciones pendientes de todos los talleres
-    @inscripciones_pendientes_totales = Inscripcion.where(estado: 'pendiente').includes(:estudiante, :taller).order(id: :desc)
+    @talleres = search_talleres.page(params[:page]).per(20)
+    @inscripciones_pendientes_totales = Inscripcion.where(estado: 'pendiente')
+                                                     .includes(:estudiante, :taller)
+                                                     .order(id: :desc)
+                                                     .page(params[:page])
+                                                     .per(20)
+  end
+
+  private
+
+  def search_talleres
+    talleres = Taller.all
+    talleres = talleres.where("nombre LIKE ? OR descripcion LIKE ?", "%#{params[:q]}%", "%#{params[:q]}%") if params[:q].present?
+    talleres = talleres.proximos if params[:filter] == 'proximos'
+    talleres = talleres.pasados if params[:filter] == 'pasados'
+    talleres
   end
 
   # GET /talleres/:id
