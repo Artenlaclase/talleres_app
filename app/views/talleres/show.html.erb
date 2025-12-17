@@ -21,15 +21,11 @@
 </div>
 
 <!-- INSCRIPCIONES PENDIENTES -->
-<% if @inscripciones_pendientes.nil? %>
-  <div style="background: #fee2e2; border: 1px solid #fca5a5; padding: 20px; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); margin-bottom: 24px;">
-    <p style="color: #991b1b; font-weight: bold;">⚠️ Error: @inscripciones_pendientes no está cargado</p>
-  </div>
-<% elsif @inscripciones_pendientes.any? %>
+<% if @inscripciones_pendientes&.any? %>
   <div style="background: #fef3c7; border: 1px solid #fcd34d; padding: 20px; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); margin-bottom: 24px;">
-    <h2 style="font-size: 20px; font-weight: bold; margin-bottom: 16px; color: #92400e;">⏳ Inscripciones Pendientes de Aprobación (<%= @inscripciones_pendientes.count %>)</h2>
+    <h2 style="font-size: 20px; font-weight: bold; margin-bottom: 16px; color: #92400e;">⏳ Inscripciones Pendientes de Aprobación (<%= @inscripciones_pendientes&.count || 0 %>)</h2>
     <div style="display: grid; gap: 12px;">
-      <% @inscripciones_pendientes.each do |inscripcion| %>
+      <% (@inscripciones_pendientes || []).each do |inscripcion| %>
         <div style="background: white; border: 1px solid #fcd34d; border-radius: 6px; padding: 16px; display: flex; justify-content: space-between; align-items: center;">
           <div>
             <p style="margin: 0; font-weight: 600; color: #1f2937; font-size: 16px;"><%= inscripcion.estudiante.nombre %></p>
