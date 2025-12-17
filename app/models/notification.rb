@@ -1,6 +1,6 @@
 class Notification < ApplicationRecord
   belongs_to :user
-  has_one :inscripcion, optional: true, dependent: :nullify
+  belongs_to :inscripcion, optional: true
 
   # Estados de notificación
   enum :notification_type, { 

@@ -35,7 +35,7 @@ Rails.application.routes.draw do
     resources :calificaciones, only: [:new, :create, :edit, :update, :destroy]
     resources :inscripciones, only: [:new, :create]
   end
-  resources :inscripciones, only: [] do
+  resources :inscripciones, only: [:index] do
     member do
       patch :approve
       patch :reject
