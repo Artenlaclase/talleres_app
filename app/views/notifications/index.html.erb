@@ -1,0 +1,183 @@
+<div class="space-y-4">
+  <!-- HEADER -->
+  <section class="bg-white rounded-lg shadow p-6 mb-6">
+    <div class="flex justify-between items-center">
+      <div>
+        <h1 class="text-3xl font-bold text-gray-800">Notificaciones</h1>
+        <p class="text-gray-600 mt-1">
+          <% if @unread_count > 0 %>
+            Tienes <strong><%= @unread_count %></strong> notificación<%= @unread_count == 1 ? '' : 'es' %> sin leer
+          <% else %>
+            Todas tus notificaciones están leídas
+          <% end %>
+        </p>
+      </div>
+      <% if @notifications.any? %>
+        <%= button_to "Marcar todas como leídas", notifications_path, method: :patch, 
+            class: "bg-blue-600 text-white font-medium py-2 px-4 rounded hover:bg-blue-700 transition-colors" %>
+      <% end %>
+    </div>
+  </section>
+
+  <!-- FILTROS -->
+  <section class="bg-white rounded-lg shadow p-4 mb-6">
+    <div class="flex flex-col md:flex-row gap-4">
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-2">Tipo de Notificación</label>
+        <select class="w-full md:w-48 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500" 
+                data-action="change->notifications#filter">
+          <option value="">Todas las notificaciones</option>
+          <option value="inscripcion_pendiente">Inscripciones Pendientes</option>
+          <option value="inscripcion_aprobada">Inscripciones Aprobadas</option>
+          <option value="inscripcion_rechazada">Inscripciones Rechazadas</option>
+          <option value="taller_modificado">Talleres Modificados</option>
+          <option value="sistema">Noticias del Sistema</option>
+        </select>
+      </div>
+      <div class="md:ml-auto">
+        <label class="block text-sm font-medium text-gray-700 mb-2">Estado</label>
+        <select class="w-full md:w-48 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                data-action="change->notifications#filter">
+          <option value="">Todas</option>
+          <option value="unread">Sin Leer</option>
+          <option value="read">Leídas</option>
+        </select>
+      </div>
+    </div>
+  </section>
+
+  <!-- LISTA DE NOTIFICACIONES -->
+  <% if @notifications.any? %>
+    <div class="space-y-3">
+      <% @notifications.each do |notification| %>
+        <div id="notification-<%= notification.id %>" 
+             data-notification-id="<%= notification.id %>"
+             class="bg-white rounded-lg shadow p-4 hover:shadow-md transition-shadow <%= 'bg-blue-50 border-l-4 border-blue-600' if notification.unread? %>">
+          <div class="flex gap-4">
+            <!-- Icono por tipo -->
+            <div class="flex-shrink-0">
+              <% case notification.notification_type %>
+              <% when 'inscripcion_pendiente' %>
+                <div class="flex items-center justify-center h-10 w-10 rounded-full bg-yellow-100">
+                  <svg class="w-6 h-6 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                  </svg>
+                </div>
+              <% when 'inscripcion_aprobada' %>
+                <div class="flex items-center justify-center h-10 w-10 rounded-full bg-green-100">
+                  <svg class="w-6 h-6 text-green-600" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"></path>
+                  </svg>
+                </div>
+              <% when 'inscripcion_rechazada' %>
+                <div class="flex items-center justify-center h-10 w-10 rounded-full bg-red-100">
+                  <svg class="w-6 h-6 text-red-600" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"></path>
+                  </svg>
+                </div>
+              <% else %>
+                <div class="flex items-center justify-center h-10 w-10 rounded-full bg-blue-100">
+                  <svg class="w-6 h-6 text-blue-600" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M13 16h-2V9h2m0-3h-2V2h2m6.5-1C19.5 2.5 21 4 21 5.5S19.5 9 18 9s-3-1.5-3-3 1.5-3 3-3m-9 7c1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3 1.34 3 3 3m0 1.5C6.67 10.5 5 11.84 5 13.5s1.67 3 3.75 3h2.5c2.08 0 3.75-1.34 3.75-3s-1.67-3-3.75-3h-2.5z"></path>
+                  </svg>
+                </div>
+              <% end %>
+            </div>
+
+            <!-- Contenido -->
+            <div class="flex-1">
+              <div class="flex justify-between items-start">
+                <div>
+                  <h3 class="font-bold text-gray-900"><%= notification.title %></h3>
+                  <p class="text-gray-600 text-sm mt-1"><%= notification.message %></p>
+                  
+                  <!-- Información de inscripción relacionada -->
+                  <% if notification.inscripcion %>
+                    <div class="mt-3 p-3 bg-gray-50 rounded text-xs text-gray-600">
+                      <strong>Taller:</strong> <%= notification.inscripcion.taller.nombre %> | 
+                      <strong>Estudiante:</strong> <%= notification.inscripcion.estudiante.nombre %>
+                    </div>
+                  <% end %>
+                </div>
+
+                <!-- Indicador de estado de lectura -->
+                <% if notification.unread? %>
+                  <span class="inline-block w-3 h-3 bg-blue-600 rounded-full flex-shrink-0 ml-2 mt-1"></span>
+                <% end %>
+              </div>
+
+              <!-- Timestamp -->
+              <p class="text-xs text-gray-400 mt-2">
+                <%= time_ago_in_words(notification.created_at) %> atrás
+              </p>
+
+              <!-- Acciones -->
+              <div class="flex gap-2 mt-3">
+                <% if notification.unread? %>
+                  <%= link_to "Marcar como leída", 
+                      mark_as_read_notification_path(notification), 
+                      method: :patch,
+                      class: "text-xs px-3 py-1 bg-blue-100 text-blue-700 rounded hover:bg-blue-200 transition-colors" %>
+                <% end %>
+                <%= link_to "Eliminar", 
+                    notification_path(notification), 
+                    method: :delete, 
+                    data: { confirm: "¿Estás seguro?" },
+                    class: "text-xs px-3 py-1 bg-red-100 text-red-700 rounded hover:bg-red-200 transition-colors" %>
+              </div>
+            </div>
+          </div>
+        </div>
+      <% end %>
+    </div>
+
+    <!-- Paginación -->
+    <% if @notifications.size > 20 %>
+      <div class="mt-6 flex justify-center">
+        <%= link_to "Cargar más", notifications_path, class: "px-6 py-2 bg-gray-200 text-gray-800 rounded hover:bg-gray-300 transition-colors" %>
+      </div>
+    <% end %>
+  <% else %>
+    <!-- Sin notificaciones -->
+    <div class="bg-white rounded-lg shadow p-12 text-center">
+      <svg class="w-16 h-16 mx-auto text-gray-300 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path>
+      </svg>
+      <h3 class="text-lg font-semibold text-gray-800 mb-2">No hay notificaciones</h3>
+      <p class="text-gray-600 mb-4">Cuando haya actividad nueva, recibirás notificaciones aquí</p>
+      <%= link_to "Volver al inicio", root_path, class: "inline-block px-6 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors" %>
+    </div>
+  <% end %>
+</div>
+
+<style>
+  @keyframes slide-in {
+    from {
+      transform: translateX(100%);
+      opacity: 0;
+    }
+    to {
+      transform: translateX(0);
+      opacity: 1;
+    }
+  }
+
+  @keyframes slide-out {
+    from {
+      transform: translateX(0);
+      opacity: 1;
+    }
+    to {
+      transform: translateX(100%);
+      opacity: 0;
+    }
+  }
+
+  .animate-slide-in {
+    animation: slide-in 0.3s ease-out;
+  }
+
+  .animate-slide-out {
+    animation: slide-out 0.3s ease-out;
+  }
+</style>

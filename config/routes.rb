@@ -1,10 +1,24 @@
 Rails.application.routes.draw do
   devise_for :users, controllers: { registrations: "devise/registrations" }
 
+  # WebSocket para Action Cable
+  mount ActionCable.server => '/cable'
+
   namespace :api do
     namespace :v1 do
       resources :talleres, only: [:index, :show]
       resources :estudiantes, only: [:index, :show]
+    end
+  end
+
+  # Notificaciones
+  resources :notifications, only: [:index, :show, :destroy] do
+    member do
+      patch :mark_as_read
+    end
+    collection do
+      get :unread_count
+      patch :mark_all_as_read
     end
   end
 
@@ -35,4 +49,5 @@ Rails.application.routes.draw do
 
   get "up" => "rails/health#show", as: :rails_health_check
 end
+
 

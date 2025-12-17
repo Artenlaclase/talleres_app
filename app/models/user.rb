@@ -3,6 +3,7 @@ class User < ApplicationRecord
          :recoverable, :rememberable, :validatable
 
   has_one :estudiante, dependent: :destroy
+  has_many :notifications, dependent: :destroy
 
   enum :role, { usuario: 'usuario', admin: 'admin' }, default: :usuario
 
