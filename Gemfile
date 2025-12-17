@@ -76,7 +76,7 @@ group :test do
   gem "faker", "~> 3.2"
 
   # Matchers for Rails validations and associations
-  gem "shoulda-matchers", "~> 5.1"
+  gem "shoulda-matchers", "~> 7.0"
 
   # Controller testing helpers
   gem "rails-controller-testing", "~> 1.0"
