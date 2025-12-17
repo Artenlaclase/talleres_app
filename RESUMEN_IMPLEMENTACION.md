@@ -1,6 +1,55 @@
-# 🎊 ¡IMPLEMENTACIÓN COMPLETADA EXITOSAMENTE!
+# 🎊 ¡IMPLEMENTACIÓN COMPLETADA Y MEJORADA!
 
-## 🎯 Mejoras de UI/UX Implementadas
+## 🚀 Última Actualización - Refactorización v1.2
+
+### 🏗️ Mejoras de Arquitectura Implementadas
+
+#### 1️⃣ **Relación Estudiante-Taller Refactorizada**
+- `taller_id` en estudiantes ahora **OPCIONAL**
+- Sistema de inscripciones como fuente principal
+- Eliminada confusión de relaciones múltiples
+- **Beneficio**: Mejor mantenimiento y escalabilidad
+
+#### 2️⃣ **Índice de Calificaciones Corregido**
+- Cambio: `[estudiante_id, taller_id]` → `[estudiante_id, taller_id, nombre_evaluacion]`
+- **Permite**: Múltiples evaluaciones por estudiante por taller
+- **Antes**: Solo 1 calificación por estudiante por taller
+- **Ahora**: Parcial, final, recuperatorio, etc.
+
+#### 3️⃣ **Paginación Agregada (Kaminari)**
+- Talleres con paginación de 20 items por página
+- Mejora rendimiento y UX
+- Uso: `.page(params[:page]).per(20)`
+
+#### 4️⃣ **Búsqueda en Talleres**
+- Busca en nombre y descripción
+- Filtros por estado (próximos, pasados)
+- Integrado en TalleresController#index
+- URL: `/talleres?q=búsqueda&filter=proximos`
+
+#### 5️⃣ **Service Layer - InscripcionService**
+- Lógica de negocio centralizada
+- Validaciones: cupos, límite, duplicados
+- Método `call` retorna true/false con mensajes de error
+- Ubicación: `app/services/inscripcion_service.rb`
+- **Beneficio**: Código más limpio y testeable
+
+#### 6️⃣ **Métodos Helper Mejorados**
+```ruby
+# Estudiante model
+def cupos_alcanzados?
+  return false unless max_talleres_por_periodo
+  inscripciones.where(estado: 'aprobada').count >= max_talleres_por_periodo
+end
+
+def puede_inscribirse?
+  !cupos_alcanzados?
+end
+```
+
+---
+
+## 🎯 Mejoras de UI/UX Implementadas (v1.1)
 
 ### ✨ 1. Sistema de Notificaciones en Tiempo Real
 **Status:** ✅ COMPLETADO
@@ -12,7 +61,7 @@
 - 📋 Centro de notificaciones con historial completo
 - ⏰ Notificaciones de aprobación/rechazo automáticas
 
-**Archivos:** 10 nuevos + 6 actualizados
+**Archivos:** 11 nuevos + 6 actualizados
 
 ---
 

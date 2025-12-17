@@ -2,15 +2,22 @@
 
 TalleresApp es una aplicación educativa para gestionar talleres y estudiantes. Está pensada para enseñar el patrón MVC en Rails, autenticación con Devise, estilos con TailwindCSS, creación de APIs y **notificaciones en tiempo real con Action Cable**.
 
-## ✨ Nuevas Características (v1.1)
+## ✨ Nuevas Características (v1.2) - Refactorización
 
-### 🔔 Sistema de Notificaciones en Tiempo Real
+### 🏗️ Mejoras de Arquitectura
+- **Relación Estudiante-Taller Refactorizada**: `taller_id` ahora opcional, inscripciones como fuente principal
+- **Índice Calificaciones Corregido**: Permite múltiples evaluaciones por estudiante por taller
+- **Service Layer**: `InscripcionService` centraliza lógica de negocio
+- **Paginación**: Kaminari integrado para mejor performance
+- **Búsqueda**: Búsqueda por nombre/descripción + filtros por estado
+
+### 🔔 Sistema de Notificaciones en Tiempo Real (v1.1)
 - Notificaciones automáticas cuando se crean inscripciones
 - Updates en vivo via Action Cable (WebSocket)
 - Badge con contador en navbar
 - Centro de notificaciones con historial completo
 
-### 📊 Dashboard de Estadísticas
+### 📊 Dashboard de Estadísticas (v1.1)
 - Métricas en tiempo real (total talleres, estudiantes, inscripciones)
 - Panel admin con notificaciones recientes
 - Actividad reciente (talleres y estudiantes)
@@ -52,8 +59,8 @@ TalleresApp es una aplicación educativa para gestionar talleres y estudiantes. 
 - Autenticación:
 	- `devise_for :users`
 - Notificaciones:
-	- `resources :notifications` (nuevo)
-	- WebSocket: `mount ActionCable.server => '/cable'` (nuevo)
+	- `resources :notifications`
+	- WebSocket: `mount ActionCable.server => '/cable'`
 - API JSON:
 	- `GET /api/v1/talleres`
 	- `GET /api/v1/estudiantes`
@@ -63,19 +70,25 @@ TalleresApp es una aplicación educativa para gestionar talleres y estudiantes. 
 	- Controlador: `app/controllers/talleres_controller.rb` → método `create`
 	- Modelo: `app/models/taller.rb` (validaciones, relaciones)
 	- Vista: `app/views/talleres/_form.html.erb` y páginas `new`/`edit`
-- Listar Talleres:
-	- Controlador: método `index`
-	- Vista: `app/views/talleres/index.html.erb`
-- Relación Estudiante ↔ Taller:
-	- Modelo: `app/models/estudiante.rb` con `belongs_to :taller`
-	- Migración: agrega `taller_id` en `db/migrate/*_add_taller_to_estudiantes.rb`
+- Listar Talleres (con paginación y búsqueda):
+	- Controlador: método `index` + `search_talleres` helper
+	- Vista: `app/views/talleres/index.html.erb` con paginación
+	- Query: `.page(params[:page]).per(20)` + LIKE búsqueda
+- Relación Estudiante ↔ Taller (v1.2):
+	- Modelo: `app/models/estudiante.rb` con `belongs_to :taller, optional: true`
+	- Inscripciones: `has_many :inscripciones` + `has_many :talleres_inscritos`
+	- Migración: `db/migrate/20250116000001_refactor_student_taller_relation.rb`
 - Autenticación y Roles:
 	- Devise: `User` en `app/models/user.rb`
-	- Restricción de acciones: `before_action :authenticate_user!` y método `require_admin!` en `ApplicationController`
-- **Notificaciones en Tiempo Real (NUEVO)**:
-	- Modelo: `app/models/notification.rb` (nueva)
-	- Channel: `app/channels/notifications_channel.rb` (nueva)
-	- Controller: `app/controllers/notifications_controller.rb` (nuevo)
+	- Restricción de accesos: `before_action :authenticate_user!` y método `require_admin!`
+- **Lógica de Negocio Centralizada (v1.2)**:
+	- Service: `app/services/inscripcion_service.rb`
+	- Uso: `service = InscripcionService.new(estudiante, taller); service.call`
+	- Validaciones: cupos, límite de talleres, duplicados
+- **Notificaciones en Tiempo Real (v1.1)**:
+	- Modelo: `app/models/notification.rb`
+	- Channel: `app/channels/notifications_channel.rb`
+	- Controller: `app/controllers/notifications_controller.rb`
 	- Callbacks en Inscripcion: `after_create :notify_admins_on_inscription`
 	- Stimulus JS: `app/javascript/controllers/notifications_controller.js`
 

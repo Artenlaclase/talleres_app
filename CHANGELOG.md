@@ -1,5 +1,43 @@
 # 📋 CHANGELOG - Cambios Implementados
 
+## Versión 1.2 - Refactorización de Arquitectura (Diciembre 2025)
+
+### 🏗️ Mejoras de Diseño y Lógica
+
+#### 🔄 Relación Estudiante-Taller Refactorizada
+- `taller_id` en estudiantes ahora es **OPCIONAL** (antes requerido)
+- Eliminada validación que obligaba a asignar un taller primario
+- **Sistema de inscripciones como fuente principal** de datos
+- Reduce confusión: un estudiante puede estar en múltiples talleres via inscripciones
+- Mejora: `talleres_activos` ahora solo retorna inscritos con estado 'aprobada'
+
+#### 🗂️ Índice de Calificaciones Corregido
+- **Antes**: `unique_index(estudiante_id, taller_id)` → solo 1 calificación por estudiante por taller
+- **Ahora**: `unique_index(estudiante_id, taller_id, nombre_evaluacion)` 
+- **Beneficio**: Permite múltiples evaluaciones (parcial, final, recuperatorio, etc.)
+- **Migración**: `db/migrate/20250116000001_refactor_student_taller_relation.rb`
+
+#### 📄 Lógica de Negocio Centralizada
+- **Nuevo**: `app/services/inscripcion_service.rb`
+- Centraliza validaciones: cupos, límite de talleres, duplicados
+- Método `call` retorna boolean, `error` message si falla
+- Previene duplicación de lógica en controladores
+
+#### 📝 Métodos de Modelo Mejorados
+```ruby
+# En Estudiante model
+def cupos_alcanzados?
+  return false unless max_talleres_por_periodo
+  inscripciones.where(estado: 'aprobada').count >= max_talleres_por_periodo
+end
+
+def puede_inscribirse?
+  !cupos_alcanzados?
+end
+```
+
+---
+
 ## Versión 1.1 - Diciembre 2025
 
 ### ✨ Nuevas Características
@@ -33,20 +71,7 @@
 
 ---
 
-## 📁 Archivos Nuevos (10)
-
-```
-app/models/notification.rb
-app/channels/application_cable/channel.rb
-app/channels/application_cable/connection.rb
-app/channels/notifications_channel.rb
-app/controllers/notifications_controller.rb
-app/javascript/controllers/notifications_controller.js
-app/views/notifications/index.html.erb
-app/views/notifications/_notification.html.erb
-db/migrate/20250101000001_create_notifications.rb
-config/cable.yml (configurado)
-```
+## 📁 Archivos Nuevos (11)
 
 ---
 

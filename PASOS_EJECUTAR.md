@@ -1,8 +1,19 @@
-# 🚀 PASOS PARA EJECUTAR - Sistema de Notificaciones
+# 🚀 PASOS PARA EJECUTAR - Sistema de Notificaciones v1.2
 
 ## ⚠️ IMPORTANTE
 
 Debes usar **`bin/dev`** y NO `rails s` porque el sistema necesita WebSocket (Action Cable).
+
+---
+
+## 📋 Paso 0: Actualizar Gemas (NUEVO en v1.2)
+
+```powershell
+# Agregar kaminari para paginación
+bundle add kaminari
+# o instalar directamente
+gem install kaminari
+```
 
 ---
 
@@ -35,6 +46,17 @@ rails db:migrate
 -- create_table(:notifications)
    -> 0.0234s
 == 20250101000001 CreateNotifications: migrated (0.0235s) ==============
+
+== 20250116000001 RefactorStudentTallerRelation: migrating =============
+-- change_column_null(:estudiantes, :taller_id, true)
+   -> 0.0409s
+-- remove_index(:calificaciones, [:estudiante_id, :taller_id], {if_exists:
+ true})
+   -> 0.0007s
+-- add_index(:calificaciones, [:estudiante_id, :taller_id, :nombre_evalua
+cion], {unique: true, name: "idx_calificaciones_estudiante_taller_evaluacion"})
+   -> 0.0021s
+== 20250116000001 RefactorStudentTallerRelation: migrated (0.0447s) =====
 ```
 
 **Verificar que se creó:**
