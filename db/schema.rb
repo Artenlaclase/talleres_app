@@ -46,6 +46,21 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_08_025944) do
     t.index ["taller_id"], name: "index_inscripciones_on_taller_id"
   end
 
+  create_table "notifications", force: :cascade do |t|
+    t.datetime "created_at", default: -> { "CURRENT_TIMESTAMP" }, null: false
+    t.integer "inscripcion_id"
+    t.text "message"
+    t.string "notification_type", default: "sistema", null: false
+    t.datetime "read_at"
+    t.string "title", null: false
+    t.datetime "updated_at", default: -> { "CURRENT_TIMESTAMP" }, null: false
+    t.integer "user_id", null: false
+    t.index ["inscripcion_id"], name: "index_notifications_on_inscripcion_id"
+    t.index ["user_id", "created_at"], name: "index_notifications_on_user_id_and_created_at"
+    t.index ["user_id", "read_at"], name: "index_notifications_on_user_id_and_read_at"
+    t.index ["user_id"], name: "index_notifications_on_user_id"
+  end
+
   create_table "talleres", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.integer "cupos"
@@ -76,4 +91,6 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_08_025944) do
   add_foreign_key "estudiantes", "users"
   add_foreign_key "inscripciones", "estudiantes"
   add_foreign_key "inscripciones", "talleres"
+  add_foreign_key "notifications", "inscripcions"
+  add_foreign_key "notifications", "users"
 end
