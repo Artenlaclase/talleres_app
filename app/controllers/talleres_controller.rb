@@ -14,32 +14,14 @@ class TalleresController < ApplicationController
                                                      .per(20)
   end
 
-  private
-
-  def search_talleres
-    talleres = Taller.all
-    talleres = talleres.where("nombre LIKE ? OR descripcion LIKE ?", "%#{params[:q]}%", "%#{params[:q]}%") if params[:q].present?
-    talleres = talleres.proximos if params[:filter] == "proximos"
-    talleres = talleres.pasados if params[:filter] == "pasados"
-    talleres
-  end
-
   # GET /talleres/:id
   def show
-    @calificaciones = @taller.calificaciones.includes(:estudiante)
-
-    # Obtener estudiantes con inscripciones aprobadas (fuente principal)
+    # Obtener SOLO estudiantes con inscripciones aprobadas en este taller
     @estudiantes_taller = @taller.estudiantes_inscritos.where(inscripciones: { estado: "aprobada" }).distinct.to_a
 
-    # Agregar estudiantes con legacy taller_id (si existen y no están ya incluidos)
-    estudiantes_legacy = Estudiante.where(taller_id: @taller.id).to_a
-    @estudiantes_taller = (@estudiantes_taller + estudiantes_legacy).uniq { |e| e.id }
-
-    # Agregar estudiantes con calificaciones en este taller (si existen y no están ya incluidos)
-    estudiantes_calificados = Estudiante.joins(:calificaciones)
-                                        .where(calificaciones: { taller_id: @taller.id })
-                                        .distinct.to_a
-    @estudiantes_taller = (@estudiantes_taller + estudiantes_calificados).uniq { |e| e.id }
+    # Obtener calificaciones de SOLO estos estudiantes
+    estudiante_ids = @estudiantes_taller.map(&:id)
+    @calificaciones = @taller.calificaciones.where(estudiante_id: estudiante_ids).includes(:estudiante)
 
     # Cargar inscripciones pendientes para aprobación
     @inscripciones_pendientes = @taller.inscripciones.where(estado: "pendiente").includes(:estudiante)
@@ -82,8 +64,15 @@ class TalleresController < ApplicationController
     end
   end
 
-
   private
+
+  def search_talleres
+    talleres = Taller.all
+    talleres = talleres.where("nombre LIKE ? OR descripcion LIKE ?", "%#{params[:q]}%", "%#{params[:q]}%") if params[:q].present?
+    talleres = talleres.proximos if params[:filter] == "proximos"
+    talleres = talleres.pasados if params[:filter] == "pasados"
+    talleres
+  end
 
   def set_taller
     @taller = Taller.find(params[:id])

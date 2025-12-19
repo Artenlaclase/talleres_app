@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2025_12_08_025944) do
+ActiveRecord::Schema[8.1].define(version: 2025_12_19_000002) do
   create_table "calificaciones", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.text "descripcion"
@@ -92,6 +92,6 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_08_025944) do
   add_foreign_key "estudiantes", "users"
   add_foreign_key "inscripciones", "estudiantes"
   add_foreign_key "inscripciones", "talleres"
-  add_foreign_key "notifications", "inscripcions"
+  add_foreign_key "notifications", "inscripciones", column: "inscripcion_id", on_delete: :cascade
   add_foreign_key "notifications", "users"
 end

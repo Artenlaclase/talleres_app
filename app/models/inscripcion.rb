@@ -27,7 +27,7 @@ class Inscripcion < ApplicationRecord
   def notify_admins_on_inscription
     if pendiente?
       message = "#{estudiante.nombre} se ha inscrito al taller \"#{taller.nombre}\" y está pendiente de aprobación"
-      
+
       User.admins.each do |admin|
         notification = admin.notifications.create(
           title: "Nueva Inscripción Pendiente",
@@ -35,16 +35,18 @@ class Inscripcion < ApplicationRecord
           notification_type: :inscripcion_pendiente,
           inscripcion: self
         )
-        
+
         # Broadcast en tiempo real
         ActionCable.server.broadcast(
           "notifications:#{admin.id}",
-          action: "new_notification",
-          data: {
-            id: notification.id,
-            title: notification.title,
-            message: notification.message,
-            type: notification.notification_type
+          {
+            action: "new_notification",
+            data: {
+              id: notification.id,
+              title: notification.title,
+              message: notification.message,
+              type: notification.notification_type
+            }
           }
         )
       end
@@ -69,46 +71,50 @@ class Inscripcion < ApplicationRecord
 
   def notify_inscription_approved(user)
     message = "Tu inscripción al taller \"#{taller.nombre}\" ha sido aprobada"
-    
+
     notification = user.notifications.create(
       title: "Inscripción Aprobada",
       message: message,
       notification_type: :inscripcion_aprobada,
       inscripcion: self
     )
-    
+
     # Broadcast
     ActionCable.server.broadcast(
       "notifications:#{user.id}",
-      action: "new_notification",
-      data: {
-        id: notification.id,
-        title: notification.title,
-        message: notification.message,
-        type: notification.notification_type
+      {
+        action: "new_notification",
+        data: {
+          id: notification.id,
+          title: notification.title,
+          message: notification.message,
+          type: notification.notification_type
+        }
       }
     )
   end
 
   def notify_inscription_rejected(user)
     message = "Tu inscripción al taller \"#{taller.nombre}\" ha sido rechazada"
-    
+
     notification = user.notifications.create(
       title: "Inscripción Rechazada",
       message: message,
       notification_type: :inscripcion_rechazada,
       inscripcion: self
     )
-    
+
     # Broadcast
     ActionCable.server.broadcast(
       "notifications:#{user.id}",
-      action: "new_notification",
-      data: {
-        id: notification.id,
-        title: notification.title,
-        message: notification.message,
-        type: notification.notification_type
+      {
+        action: "new_notification",
+        data: {
+          id: notification.id,
+          title: notification.title,
+          message: notification.message,
+          type: notification.notification_type
+        }
       }
     )
   end

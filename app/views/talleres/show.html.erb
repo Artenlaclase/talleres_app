@@ -107,7 +107,7 @@
         </thead>
         <tbody>
           <% (@estudiantes_taller || []).each do |estudiante| %>
-            <% calificaciones = @calificaciones.where(estudiante_id: estudiante.id).sort_by { |c| c.created_at } %>
+            <% calificaciones = @calificaciones.select { |c| c.estudiante_id == estudiante.id }.sort_by { |c| c.created_at } %>
             <% promedio = calificaciones.any? ? (calificaciones.sum(&:nota) / calificaciones.count).round(1) : nil %>
             <tr style="border-bottom: 1px solid #e5e7eb;">
               <td style="padding: 12px; font-weight: 500;"><%= estudiante.nombre %></td>
